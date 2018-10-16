@@ -29,6 +29,24 @@ def load_data(fname):
   Write code to read the data and return it as 2 numpy arrays.
   Make sure to convert labels to one hot encoded format.
   """
+  images = []
+  unencoded_labels = []
+  labels = []
+
+  with open('data/' + fname, 'rb') as f:
+      data_set = pickle.load(f)
+      for i in data_set:
+          images.append(i[0:len(i)-2])
+          unencoded_labels.append(i[len(i)-1])
+
+  for j in unencoded_labels:
+      one_hot = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      one_hot[int(j)] = 1
+      labels.append(one_hot)
+
+  images = np.array(images)
+  labels = np.array(labels)
+
   return images, labels
 
 
