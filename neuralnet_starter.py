@@ -33,34 +33,35 @@ class Activation:
   def __init__(self, activation_type = "sigmoid"):
     self.activation_type = activation_type
     self.x = None # Save the input 'x' for sigmoid or tanh or ReLU to this variable since it will be used later for computing gradients.
-  
+
   def forward_pass(self, a):
     if self.activation_type == "sigmoid":
       return self.sigmoid(a)
-    
+
     elif self.activation_type == "tanh":
       return self.tanh(a)
-    
+
     elif self.activation_type == "ReLU":
       return self.relu(a)
-  
+
   def backward_pass(self, delta):
     if self.activation_type == "sigmoid":
       grad = self.grad_sigmoid()
-    
+
     elif self.activation_type == "tanh":
       grad = self.grad_tanh()
-    
+
     elif self.activation_type == "ReLU":
       grad = self.grad_ReLU()
-    
+
     return grad * delta
-      
+
   def sigmoid(self, x):
     """
     Write the code for sigmoid activation function that takes in a numpy array and returns a numpy array.
     """
     self.x = x
+    output = 1 / (1 + np.exp(-self.x))
     return output
 
   def tanh(self, x):
@@ -68,6 +69,7 @@ class Activation:
     Write the code for tanh activation function that takes in a numpy array and returns a numpy array.
     """
     self.x = x
+    output = np.tanh(self.x)
     return output
 
   def ReLU(self, x):
@@ -113,7 +115,7 @@ class Layer():
     """
     self.x = x
     return self.a
-  
+
   def backward_pass(self, delta):
     """
     Write the code for backward pass. This takes in gradient from its next layer as input,
@@ -121,7 +123,7 @@ class Layer():
     """
     return self.d_x
 
-      
+
 class Neuralnetwork():
   def __init__(self, config):
     self.layers = []
@@ -131,8 +133,8 @@ class Neuralnetwork():
     for i in range(len(config['layer_specs']) - 1):
       self.layers.append( Layer(config['layer_specs'][i], config['layer_specs'][i+1]) )
       if i < len(config['layer_specs']) - 2:
-        self.layers.append(Activation(config['activation']))  
-    
+        self.layers.append(Activation(config['activation']))
+
   def forward_pass(self, x, targets=None):
     """
     Write the code for forward pass through all layers of the model and return loss and predictions.
@@ -146,33 +148,33 @@ class Neuralnetwork():
     find cross entropy loss between logits and targets
     '''
     return output
-    
+
   def backward_pass(self):
     '''
-    implement the backward pass for the whole network. 
+    implement the backward pass for the whole network.
     hint - use previously built functions.
     '''
-      
+
 
 def trainer(model, X_train, y_train, X_valid, y_valid, config):
   """
   Write the code to train the network. Use values from config to set parameters
   such as L2 penalty, number of epochs, momentum, etc.
   """
-  
-  
+
+
 def test(model, X_test, y_test, config):
   """
   Write code to run the model on the data passed as input and return accuracy.
   """
   return accuracy
-      
+
 
 if __name__ == "__main__":
   train_data_fname = 'MNIST_train.pkl'
   valid_data_fname = 'MNIST_valid.pkl'
   test_data_fname = 'MNIST_test.pkl'
-  
+
   ### Train the network ###
   model = Neuralnetwork(config)
   X_train, y_train = load_data(train_data_fname)
@@ -180,4 +182,3 @@ if __name__ == "__main__":
   X_test, y_test = load_data(test_data_fname)
   trainer(model, X_train, y_train, X_valid, y_valid, config)
   test_acc = test(model, X_test, y_test, config)
-
