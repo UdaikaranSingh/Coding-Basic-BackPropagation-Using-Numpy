@@ -98,6 +98,7 @@ class Activation:
     Write the code for ReLU activation function that takes in a numpy array and returns a numpy array.
     """
     self.x = x
+    output = self.x * (self.x > 0)
     return output
 
   def grad_sigmoid(self):
