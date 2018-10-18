@@ -156,7 +156,7 @@ class Layer():
     """
     d_w = np.multiply(delta, self.w)
     d_b = np.multiply(delta, self.b)
-    d_x = Activation.backward_pass(delta)
+    d_x = 
     
     return self.d_x
 
@@ -204,6 +204,9 @@ class Neuralnetwork():
     implement the backward pass for the whole network.
     hint - use previously built functions.
     '''
+    delta = targets - self.y
+    for layer in reversed(layers):
+      delta = layer.backward_pass(delta)
 
 
 
