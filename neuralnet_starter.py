@@ -208,7 +208,7 @@ class Neuralnetwork():
     weightsTotal = 0
     for layer in layers:
       weightsTotal = weightsTotal + np.sum(np.power(layer.weights,2))
-    output = loss + (regFactor/2) weightsTotal
+    output = loss + (regFactor/2) * weightsTotal
     return output
 
   def backward_pass(self):
