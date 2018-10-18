@@ -122,7 +122,7 @@ class Activation:
     #need to fix RelU gradient
     grad = []
     for val in self.x[0]:
-      if (val == 0):
+      if (val < 0):
         grad.append(0)
       else:
         grad.append(1)
@@ -146,7 +146,7 @@ class Layer():
     Write the code for forward pass through a layer. Do not apply activation function here.
     """
     self.x = x
-    self.a = np.multiply(x, self.w) + self.b
+    self.a = np.matmul(x, self.w) + self.b
     #shape of self.a = (1 x out_units)
     return self.a
 
@@ -180,34 +180,35 @@ class Neuralnetwork():
     If targets == None, loss should be None. If not, then return the loss computed.
     """
     self.x = x
-    if (targets == None):
+    if (targets.any() == None):
       loss = None
     else:
       curOut = self.x
       #iterarting through the layers
-      for curLayer in layers:
+      for curLayer in self.layers:
         curOut = curLayer.forward_pass(curOut)
       #updating outputs
       self.y = curOut
       self.targets = targets
       #computing loss 
-      loss = loss_func(self.y, self.targets)
+      loss = self.loss_func(self.y, self.targets)
     return loss, self.y
 
   def loss_func(self, logits, targets):
     '''
     find cross entropy loss between logits and targets
     '''
-    output = np.dot(targets,np.log(logits)) + np.dot((1 - targets), np.log(1 - logits))
+    error_correction = 0.0001
+    output = np.dot(targets,np.log(np.transpose(logits) + error_correction)) + np.dot((1 - targets), np.log(1 - np.transpose(logits) + error_correction))
     return output
 
   def loss_func_with_regularization(self, logits, targets, regFactor):
     '''
     implements cross entropy loss with regularization
     '''
-    loss = np.dot(targets,np.log(logits)) + np.dot((1 - targets), np.log(1 - logits))
+    loss = np.dot(targets,np.log(np.transpose(logits))) + np.dot((1 - targets), np.log(1 - np.transpose(logits)))
     weightsTotal = 0
-    for layer in layers:
+    for layer in self.layers:
       weightsTotal = weightsTotal + np.sum(np.power(layer.weights,2))
     output = loss + (regFactor/2) * weightsTotal
     return output
@@ -217,8 +218,9 @@ class Neuralnetwork():
     implement the backward pass for the whole network.
     hint - use previously built functions.
     '''
-    delta = targets - self.y
-    for layer in reversed(layers):
+    delta = self.targets - self.y
+    for layer in reversed(self.layers):
+      print("dog")
       delta = layer.backward_pass(delta)
 
 
