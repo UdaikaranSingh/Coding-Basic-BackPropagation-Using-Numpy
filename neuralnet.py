@@ -63,7 +63,7 @@ class Activation:
       return self.tanh(a)
 
     elif self.activation_type == "ReLU":
-      return self.relu(a)
+      return self.ReLU(a)
 
   def backward_pass(self, delta):
     if self.activation_type == "sigmoid":
@@ -105,22 +105,23 @@ class Activation:
     """
     Write the code for gradient through sigmoid activation function that takes in a numpy array and returns a numpy array.
     """
-    grad = sigmoid(x)(1 - sigmoid(self.x))
+    grad = self.sigmoid(self.x) * (1 - self.sigmoid(self.x))
     return grad
 
   def grad_tanh(self):
     """
     Write the code for gradient through tanh activation function that takes in a numpy array and returns a numpy array.
     """
-    grad = (1 - np.power(tanh(self.x),2))
+    grad = (1 - np.power(self.tanh(self.x),2))
     return grad
 
   def grad_ReLU(self):
     """
     Write the code for gradient through ReLU activation function that takes in a numpy array and returns a numpy array.
     """
+    #need to fix RelU gradient
     grad = []
-    for val in self.x:
+    for val in self.x[0]:
       if (val == 0):
         grad.append(0)
       else:
