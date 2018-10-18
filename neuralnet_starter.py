@@ -155,9 +155,9 @@ class Layer():
     computes gradient for its weights and the delta to pass to its previous layers.
     """
     d_w = np.multiply(delta, self.w)
-    d_b = np.multiply(delta, self.w)
+    d_b = np.multiply(delta, self.b)
     d_x = Activation.backward_pass(delta)
-    #complete this
+    
     return self.d_x
 
 
