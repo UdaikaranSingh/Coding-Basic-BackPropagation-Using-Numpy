@@ -6,7 +6,7 @@ config = {}
 config['layer_specs'] = [784, 100, 100, 10]  # The length of list denotes number of hidden layers; each element denotes number of neurons in that layer; first element is the size of input layer, last element is the size of output layer.
 config['activation'] = 'sigmoid' # Takes values 'sigmoid', 'tanh' or 'ReLU'; denotes activation function for hidden layers
 config['batch_size'] = 1000  # Number of training samples per batch to be passed to network
-config['epochs'] = 50  # Number of epochs to train the model
+config['epochs'] = 50  # Number of epochs train the model
 config['early_stop'] = True  # Implement early stopping or not
 config['early_stop_epoch'] = 5  # Number of epochs for which validation loss increases to be counted as overfitting
 config['L2_penalty'] = 0  # Regularization constant
@@ -156,7 +156,8 @@ class Layer():
     """
     d_w = np.multiply(delta, self.w)
     d_b = np.multiply(delta, self.b)
-    d_x = 
+    #fix this if needed
+    d_x = delta
     
     return self.d_x
 
@@ -215,12 +216,16 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
   Write the code to train the network. Use values from config to set parameters
   such as L2 penalty, number of epochs, momentum, etc.
   """
+  trainError = float('Inf')
+  valid_Error = float('Inf')
+  #make 2 cases for early stop or not
 
 
 def test(model, X_test, y_test, config):
   """
   Write code to run the model on the data passed as input and return accuracy.
   """
+  accuracy = 0
   return accuracy
 
 
