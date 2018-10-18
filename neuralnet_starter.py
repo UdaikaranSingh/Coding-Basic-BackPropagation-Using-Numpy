@@ -105,18 +105,27 @@ class Activation:
     """
     Write the code for gradient through sigmoid activation function that takes in a numpy array and returns a numpy array.
     """
+    grad = sigmoid(x)(1 - sigmoid(self.x))
     return grad
 
   def grad_tanh(self):
     """
     Write the code for gradient through tanh activation function that takes in a numpy array and returns a numpy array.
     """
+    grad = (1 - np.power(tanh(self.x),2))
     return grad
 
   def grad_ReLU(self):
     """
     Write the code for gradient through ReLU activation function that takes in a numpy array and returns a numpy array.
     """
+    grad = []
+    for val in self.x:
+      if (val == 0):
+        grad.append(0)
+      else:
+        grad.append(1)
+    grad = np.asarray(grad)
     return grad
 
 
@@ -136,6 +145,8 @@ class Layer():
     Write the code for forward pass through a layer. Do not apply activation function here.
     """
     self.x = x
+    self.a = np.multiply(x, self.w) + self.b
+    #shape of self.a = (1 x out_units)
     return self.a
 
   def backward_pass(self, delta):
@@ -143,6 +154,7 @@ class Layer():
     Write the code for backward pass. This takes in gradient from its next layer as input,
     computes gradient for its weights and the delta to pass to its previous layers.
     """
+    self.d_x = np.multiply(np.multiply(delta, np.transpose(self.w)), "which activation function")
     return self.d_x
 
 
@@ -157,18 +169,31 @@ class Neuralnetwork():
       if i < len(config['layer_specs']) - 2:
         self.layers.append(Activation(config['activation']))
 
-  def forward_pass(self, x, targets=None):
+  def forward_pass(self, x, targets = None):
     """
     Write the code for forward pass through all layers of the model and return loss and predictions.
     If targets == None, loss should be None. If not, then return the loss computed.
     """
     self.x = x
+    if (targets == None):
+      loss = None
+    else:
+      curOut = self.x
+      #iterarting through the layers
+      for curLayer in layers:
+        curOut = curLayer.forward_pass(curOut)
+      #updating outputs
+      self.y = curOut
+      self.targets = targets
+      #computing loss 
+      loss = loss_func(self.y, self.targets)
     return loss, self.y
 
   def loss_func(self, logits, targets):
     '''
     find cross entropy loss between logits and targets
     '''
+    output = np.dot(targets,np.log(logits)) + np.dot((1 - targets), np.log(1 - logits))
     return output
 
   def backward_pass(self):
