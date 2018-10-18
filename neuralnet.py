@@ -220,7 +220,6 @@ class Neuralnetwork():
     '''
     delta = self.targets - self.y
     for layer in reversed(self.layers):
-      print("dog")
       delta = layer.backward_pass(delta)
 
 
