@@ -154,7 +154,10 @@ class Layer():
     Write the code for backward pass. This takes in gradient from its next layer as input,
     computes gradient for its weights and the delta to pass to its previous layers.
     """
-    self.d_x = np.multiply(np.multiply(delta, np.transpose(self.w)), "which activation function")
+    d_w = np.multiply(delta, self.w)
+    d_b = np.multiply(delta, self.w)
+    d_x = Activation.backward_pass(delta)
+    #complete this
     return self.d_x
 
 
@@ -201,6 +204,7 @@ class Neuralnetwork():
     implement the backward pass for the whole network.
     hint - use previously built functions.
     '''
+
 
 
 def trainer(model, X_train, y_train, X_valid, y_valid, config):
