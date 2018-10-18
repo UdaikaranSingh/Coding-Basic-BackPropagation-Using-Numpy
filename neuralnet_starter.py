@@ -200,6 +200,17 @@ class Neuralnetwork():
     output = np.dot(targets,np.log(logits)) + np.dot((1 - targets), np.log(1 - logits))
     return output
 
+  def loss_func_with_regularization(self, logits, targets, regFactor):
+    '''
+    implements cross entropy loss with regularization
+    '''
+    loss = np.dot(targets,np.log(logits)) + np.dot((1 - targets), np.log(1 - logits))
+    weightsTotal = 0
+    for layer in layers:
+      weightsTotal = weightsTotal + np.sum(np.power(layer.weights,2))
+    output = loss + (regFactor/2) weightsTotal
+    return output
+
   def backward_pass(self):
     '''
     implement the backward pass for the whole network.
