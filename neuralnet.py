@@ -155,11 +155,13 @@ class Layer():
     Write the code for backward pass. This takes in gradient from its next layer as input,
     computes gradient for its weights and the delta to pass to its previous layers.
     """
-    d_w = np.multiply(delta, self.w)
-    d_b = np.multiply(delta, self.b)
-    #fix this if needed
-    d_x = delta
-    
+    #self.d_w = np.multiply(delta, self.w)
+    #self.d_b = np.multiply(delta, np.zeros((1, len(self.b))).astype(np.float32))
+    #self.d_x = self.x
+
+    self.d_w = np.multiply(delta, self.w)
+    self.d_b = np.multiply(delta, np.zeros((1, len(self.b))).astype(np.float32))
+    self.d_x = np.sum(delta, axis = 1)
     return self.d_x
 
 
@@ -183,13 +185,13 @@ class Neuralnetwork():
     if (targets.any() == None):
       loss = None
     else:
+      self.targets = targets
       curOut = self.x
       #iterarting through the layers
       for curLayer in self.layers:
         curOut = curLayer.forward_pass(curOut)
       #updating outputs
       self.y = curOut
-      self.targets = targets
       #computing loss 
       loss = self.loss_func(self.y, self.targets)
     return loss, self.y
@@ -198,7 +200,7 @@ class Neuralnetwork():
     '''
     find cross entropy loss between logits and targets
     '''
-    error_correction = 0.0001
+    error_correction = 0.01
     output = np.dot(targets,np.log(np.transpose(logits) + error_correction)) + np.dot((1 - targets), np.log(1 - np.transpose(logits) + error_correction))
     return output
 
@@ -210,7 +212,7 @@ class Neuralnetwork():
     weightsTotal = 0
     for layer in self.layers:
       weightsTotal = weightsTotal + np.sum(np.power(layer.weights,2))
-    output = loss + (regFactor/2) * weightsTotal
+    output = loss + (regFactor / 2) * weightsTotal
     return output
 
   def backward_pass(self):
@@ -221,6 +223,7 @@ class Neuralnetwork():
     delta = self.targets - self.y
     for layer in reversed(self.layers):
       delta = layer.backward_pass(delta)
+
 
 
 
