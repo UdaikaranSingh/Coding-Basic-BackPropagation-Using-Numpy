@@ -231,7 +231,11 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
   """
   trainError = float('Inf')
   valid_Error = float('Inf')
+  bestWeights = model.layers
   #make 2 cases for early stop or not
+  #sample the batch size from the training data
+  #use online learning with stochastic samplings
+  #use momentum in update rule
 
 
 def test(model, X_test, y_test, config):
