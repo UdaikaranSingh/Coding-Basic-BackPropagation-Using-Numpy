@@ -163,11 +163,11 @@ class Layer():
     print("x shape", self.x.shape)
     print("a shape", self.a.shape)
 
-    print("dot product:", self.a.T.dot(delta.dot(self.w.T)).T.shape)
+    print("dot product:", self.x.T.dot(delta).shape)
 
-    self.d_w = self.a.T.dot(delta.dot(self.w.T)).T
-    self.d_b = self.a * delta
-    self.d_x = np.sum(delta.dot(self.w.T))
+    self.d_w = (1. / delta.shape[1]) * np.dot(delta.T, self.x).T
+    self.d_b = (1. / delta.shape[1]) * np.sum(delta, axis = 1, keepdims = True)
+    self.d_x = np.dot(delta, self.w.T)
 
     return self.d_x
 
@@ -235,14 +235,14 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
   Write the code to train the network. Use values from config to set parameters
   such as L2 penalty, number of epochs, momentum, etc.
   """
-  model.config = config
-  
+
   #2 cases for early stop or not
+  if (config['early_stop']):
+    trainError = float('Inf')
+    valid_Error = float('Inf')
+    bestWeights = model.layers
+  #else:
 
-
-  trainError = float('Inf')
-  valid_Error = float('Inf')
-  bestWeights = model.layers
   #sample the batch size from the training data
   #use online learning with stochastic samplings
   #use momentum in update rule
