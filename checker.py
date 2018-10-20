@@ -23,7 +23,6 @@ def main():
     act_tanh = neuralnet.Activation('tanh')
     act_ReLU = neuralnet.Activation('ReLU')
     
-    
     out_sigmoid = act_sigmoid.forward_pass(x)
     err_sigmoid = np.sum(np.abs(benchmark_data['out_sigmoid'] - out_sigmoid))
     check_error(err_sigmoid, "Sigmoid Forward Pass")
@@ -75,9 +74,9 @@ def main():
 
 
     
-    # print(err_sigmoid)
-    # print(err_tanh)
-    # print(err_ReLU)
+    #print(err_sigmoid)
+    #print(err_tanh)
+    #print(err_ReLU)
   
   
 def check_error(error, msg):

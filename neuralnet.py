@@ -19,7 +19,7 @@ def softmax(x):
   Write the code for softmax activation function that takes in a numpy array and returns a numpy array.
   """
   exps = np.exp(x)
-  exps_sum = sum(exps)
+  exps_sum = np.sum(exps)
   output = exps / exps_sum
   return output
 
@@ -155,15 +155,21 @@ class Layer():
     Write the code for backward pass. This takes in gradient from its next layer as input,
     computes gradient for its weights and the delta to pass to its previous layers.
     """
-    #self.d_w = np.multiply(delta, self.w)
-    #self.d_b = np.multiply(delta, np.zeros((1, len(self.b))).astype(np.float32))
-    #self.d_x = self.x
+    print("units in", self.w.shape[0])
+    print("units out", self.w.shape[1])
+    print("Delta Shape", delta.shape)
+    print("w shape", self.w.shape)
+    print("b shape", self.b.shape)
+    print("x shape", self.x.shape)
+    print("a shape", self.a.shape)
 
-    self.d_w = np.multiply(delta, self.w)
-    self.d_b = np.multiply(delta, np.zeros((1, len(self.b))).astype(np.float32))
-    self.d_x = np.sum(delta, axis = 1)
+    print("dot product:", self.a.T.dot(delta.dot(self.w.T)).T.shape)
+
+    self.d_w = self.a.T.dot(delta.dot(self.w.T)).T
+    self.d_b = self.a * delta
+    self.d_x = np.sum(delta.dot(self.w.T))
+
     return self.d_x
-
 
 class Neuralnetwork():
   def __init__(self, config):
@@ -175,6 +181,7 @@ class Neuralnetwork():
       self.layers.append( Layer(config['layer_specs'][i], config['layer_specs'][i+1]) )
       if i < len(config['layer_specs']) - 2:
         self.layers.append(Activation(config['activation']))
+    self.config = config
 
   def forward_pass(self, x, targets = None):
     """
@@ -200,19 +207,15 @@ class Neuralnetwork():
     '''
     find cross entropy loss between logits and targets
     '''
-    error_correction = 0.01
-    output = np.dot(targets,np.log(np.transpose(logits) + error_correction)) + np.dot((1 - targets), np.log(1 - np.transpose(logits) + error_correction))
-    return output
+    negLogLikelihood = - np.log(softmax(logits))
+    loss = negLogLikelihood.dot(targets)
 
-  def loss_func_with_regularization(self, logits, targets, regFactor):
-    '''
-    implements cross entropy loss with regularization
-    '''
-    loss = np.dot(targets,np.log(np.transpose(logits))) + np.dot((1 - targets), np.log(1 - np.transpose(logits)))
-    weightsTotal = 0
+    regularizationTotal = 0
     for layer in self.layers:
-      weightsTotal = weightsTotal + np.sum(np.power(layer.weights,2))
-    output = loss + (regFactor / 2) * weightsTotal
+      if isinstance(layer, Layer):
+        regularizationTotal = regularizationTotal + np.sum(np.power(layer.w,2))
+
+    output = loss + (self.config['L2_penalty'] / 2) * regularizationTotal
     return output
 
   def backward_pass(self):
@@ -232,13 +235,18 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
   Write the code to train the network. Use values from config to set parameters
   such as L2 penalty, number of epochs, momentum, etc.
   """
+  model.config = config
+  
+  #2 cases for early stop or not
+
+
   trainError = float('Inf')
   valid_Error = float('Inf')
   bestWeights = model.layers
-  #make 2 cases for early stop or not
   #sample the batch size from the training data
   #use online learning with stochastic samplings
   #use momentum in update rule
+  #use learning rate
 
 
 def test(model, X_test, y_test, config):
