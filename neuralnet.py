@@ -243,65 +243,82 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
   Write the code to train the network. Use values from config to set parameters
   such as L2 penalty, number of epochs, momentum, etc.
   """
-  if (config['momentum'] == False):
-    config['momentum'] = 0.0
+  """
+    Train this neural network using stochastic gradient descent.
+    Inputs:
+    - X: A numpy array of shape (N, D) giving training data.
+    - y: A numpy array f shape (N,) giving training labels; y[i] = c means that
+      X[i] has label c, where 0 <= c < C.
+    - X_val: A numpy array of shape (N_val, D) giving validation data.
+    - y_val: A numpy array of shape (N_val,) giving validation labels.
+    - learning_rate: Scalar giving learning rate for optimization.
+    - learning_rate_decay: Scalar giving factor used to decay the learning rate
+      after each epoch.
+    - reg: Scalar giving regularization strength.
+    - num_iters: Number of steps to take when optimizing.
+    - batch_size: Number of training examples to use per step.
+    - verbose: boolean; if true print progress during optimization.
+    """
+    num_train = X.shape[0]
+    iterations_per_epoch = max(num_train / batch_size, 1)
 
-  training_error = []
-  validation_error = []
+    # Use SGD to optimize the parameters in self.model
+    loss_history = []
+    train_acc_history = []
+    val_acc_history = []
 
-  numSamples = config['batch_size']
-  samples = np.random.choice(len(X_train), numSamples)
-  training_X = X_train[samples]
-  training_y = y_train[samples]
+    for it in xrange(num_iters):
+      X_batch = None
+      y_batch = None
 
-  #2 cases for early stop or not
-  if (config['early_stop']):
-    best_valid_Error = float('Inf')
-    #find a way to save the layers at the best
-    bestWeights = model.layers
-    bestNumEpoch = 0
-    minElements = config['early_stop_epoch']
+      #########################################################################
+      # TODO: Create a random minibatch of training data and labels, storing  #
+      # them in X_batch and y_batch respectively.                             #
+      #########################################################################
+      sample_indices = np.random.choice(np.arange(num_train), batch_size)
+      X_batch = X[sample_indices]
+      y_batch = y[sample_indices]
+      #########################################################################
+      #                             END OF YOUR CODE                          #
+      #########################################################################
 
-    for iteration in range(config['epochs']):
-      train_loss, out1 = model.forward_pass(training_X, training_y)
-      model.backward_pass()
-      valid_loss, out2 = model.forward_pass(X_valid, y_valid)
-      print(valid_loss)
+      # Compute loss and gradients using the current minibatch
+      loss, grads = self.loss(X_batch, y=y_batch, reg=reg)
+      loss_history.append(loss)
 
-      #updating weights and biases
-      for layer in model.layers:
-        if isinstance(layer, Layer):
-          #layer.w = layer.w  - config['momentum_gamma'] * layer.momentum_unit[0] - config['learning_rate'] * layer.d_w
-          layer.w = layer.w + config['learning_rate'] * layer.d_w
-          #layer.b = layer.b - config['momentum_gamma'] * layer.momentum_unit[1] - config['learning_rate'] * layer.d_b
-          layer.b = layer.b + config['learning_rate'] * layer.d_b
+      #########################################################################
+      # TODO: Use the gradients in the grads dictionary to update the         #
+      # parameters of the network (stored in the dictionary self.params)      #
+      # using stochastic gradient descent. You'll need to use the gradients   #
+      # stored in the grads dictionary defined above.                         #
+      #########################################################################
+      self.params['W1'] += -learning_rate * grads['W1']
+      self.params['b1'] += -learning_rate * grads['b1']
+      self.params['W2'] += -learning_rate * grads['W2']
+      self.params['b2'] += -learning_rate * grads['b2']
+      #########################################################################
+      #                             END OF YOUR CODE                          #
+      #########################################################################
 
-      training_error.append(train_loss)
-      validation_error.append(valid_loss)
+      if verbose and it % 100 == 0:
+        print 'iteration %d / %d: loss %f' % (it, num_iters, loss)
 
-      if ((valid_loss < best_valid_Error) and (iteration > minElements)) :
-        best_valid_Error = valid_loss
-        bestWeights = copy.deepcopy(model.layers)
-        bestNumEpoch = iteration + 1
+      # Every epoch, check train and val accuracy and decay learning rate.
+      if it % iterations_per_epoch == 0:
+        # Check accuracy
+        train_acc = (self.predict(X_batch) == y_batch).mean()
+        val_acc = (self.predict(X_val) == y_val).mean()
+        train_acc_history.append(train_acc)
+        val_acc_history.append(val_acc)
 
-    return training_error, validation_error, bestWeights, bestNumEpoch
+        # Decay learning rate
+        learning_rate *= learning_rate_decay
 
-  else:
-    for iteration in range(config['epochs']):
-      train_loss = model.forward_pass(training_X, training_y)
-      model.backward_pass()
-      valid_loss = model.loss_func(X_valid, y_valid)
-
-      #updating weights and biases
-      for layer in model.layers:
-        if isinstance(layer, Layer):
-          layer.w = layer.w + config['momentum_gamma'] * layer.momentum_unit[0] + config['learning_rate'] * layer.d_w
-          layer.b = layer.b + config['momentum_gamma'] * layer.momentum_unit[1] + config['learning_rate'] * layer.d_b
-
-      training_error.append(train_loss)
-      validation_error.append(valid_loss)
-
-    return training_error, validation_error, model.layers, config['epochs']
+    return {
+      'loss_history': loss_history,
+      'train_acc_history': train_acc_history,
+      'val_acc_history': val_acc_history,
+    }
 
 
 def test(model, X_test, y_test, config):
