@@ -13,7 +13,7 @@ config['early_stop_epoch'] = 5  # Number of epochs for which validation loss inc
 config['L2_penalty'] = 0  # Regularization constant
 config['momentum'] = False  # Denotes if momentum is to be applied or not
 config['momentum_gamma'] = 0.9  # Denotes the constant 'gamma' in momentum expression
-config['learning_rate'] = 0.0001 # Learning rate of gradient descent algorithm
+config['learning_rate'] = 0.001 # Learning rate of gradient descent algorithm
 
 def softmax(x):
   """
@@ -212,11 +212,10 @@ class Neuralnetwork():
     # loss = negLogLikelihood.T.dot(targets)
     # loss = np.sum(loss)
 
-    m = targets.argmax(axis=1).shape[0]
     p = softmax(logits)
 
-    log_likelihood = -np.log(p[range(m), targets.argmax(axis=1)])
-    loss = np.sum(log_likelihood) / m
+    log_likelihood = -np.log(p)
+    loss = np.sum(log_likelihood)
     """
     regularization function used is: ||w|| / 2
     """
@@ -243,7 +242,37 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
   Write the code to train the network. Use values from config to set parameters
   such as L2 penalty, number of epochs, momentum, etc.
   """
-  return 0
+  batch_size = config['batch_size']
+  numEpochs = config['epochs']
+  num_train = X_train.shape[0]
+  learning_rate = config['learning_rate']
+
+  batch_ind = np.random.choice(num_train, batch_size)
+  X_batch = X_train[batch_ind]
+  y_batch = y_train[batch_ind]
+
+  training_accuracy = []
+
+  print (test(model, X_batch, y_batch, model.config))
+
+  single_train = np.asarray(X_train[0])
+  single_correct = y_train[0]
+  print(single_train.reshape(1,784).shape)
+  print(single_correct.shape)
+  for i in range(numEpochs):
+    for sample in range(batch_size):
+      model.forward_pass(X_batch[sample].reshape(1,784), y_batch[sample])
+      model.backward_pass()
+      for layer in model.layers:
+        if isinstance(layer, Layer):
+          layer.w = layer.w + learning_rate * layer.d_w
+          layer.b = layer.b + learning_rate * layer.d_b
+    print (test(model, X_batch, y_batch, model.config))
+
+
+
+
+
 
 def test(model, X_test, y_test, config):
   """
@@ -269,6 +298,6 @@ if __name__ == "__main__":
   X_train, y_train = load_data(train_data_fname)
   X_valid, y_valid = load_data(valid_data_fname)
   X_test, y_test = load_data(test_data_fname)
-  # trainer(model, X_train, y_train, X_valid, y_valid, config)
-  test_acc = test(model, X_test, y_test, config)
+  trainer(model, X_train, y_train, X_valid, y_valid, config)
+  #test_acc = test(model, X_test, y_test, config)
   print(test_acc)
