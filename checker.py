@@ -52,9 +52,7 @@ def main():
     np.random.seed(42)
     x_image = np.random.randn(1, 784)
 
-    print(x_image.shape)
-    print(np.array([1, 0, 0, 0, 0, 0, 0, 0, 0, 0]).shape)
-    
+
     nnet = neuralnet.Neuralnetwork(config)
     nnet.forward_pass(x_image, targets = np.array([1, 0, 0, 0, 0, 0, 0, 0, 0, 0]))
     nnet.backward_pass()

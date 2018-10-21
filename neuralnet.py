@@ -13,7 +13,7 @@ config['early_stop_epoch'] = 5  # Number of epochs for which validation loss inc
 config['L2_penalty'] = 0  # Regularization constant
 config['momentum'] = False  # Denotes if momentum is to be applied or not
 config['momentum_gamma'] = 0.9  # Denotes the constant 'gamma' in momentum expression
-config['learning_rate'] = 0.001 # Learning rate of gradient descent algorithm
+config['learning_rate'] = 0.01 # Learning rate of gradient descent algorithm
 
 def softmax(x):
   """
@@ -257,17 +257,19 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
 
   single_train = np.asarray(X_train[0])
   single_correct = y_train[0]
-  print(single_train.reshape(1,784).shape)
-  print(single_correct.shape)
+  
   for i in range(numEpochs):
+    training_error = 0
     for sample in range(batch_size):
-      model.forward_pass(X_batch[sample].reshape(1,784), y_batch[sample])
+      training_error = training_error + model.forward_pass(X_batch[sample].reshape(1,784), y_batch[sample])[0]
       model.backward_pass()
       for layer in model.layers:
         if isinstance(layer, Layer):
           layer.w = layer.w + learning_rate * layer.d_w
           layer.b = layer.b + learning_rate * layer.d_b
     print (test(model, X_batch, y_batch, model.config))
+    print(training_error)
+    #print (test(model, X_valid, X_valid, model.config))
 
 
 
@@ -299,5 +301,5 @@ if __name__ == "__main__":
   X_valid, y_valid = load_data(valid_data_fname)
   X_test, y_test = load_data(test_data_fname)
   trainer(model, X_train, y_train, X_valid, y_valid, config)
-  #test_acc = test(model, X_test, y_test, config)
+  test_acc = test(model, X_test, y_test, config)
   print(test_acc)
