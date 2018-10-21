@@ -23,7 +23,7 @@ def main():
 	print(training_errors)
 	print(validation_errors)
 
-	accuracy = neuralnet.test(nnet, X_test, y_test)
+	accuracy = neuralnet.test(nnet, X_test, y_test, nnet.config)
 	print("accuracy: ", accuracy)
 
 	#record error (on training and validation)

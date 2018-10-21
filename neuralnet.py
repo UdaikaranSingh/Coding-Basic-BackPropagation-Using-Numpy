@@ -262,12 +262,15 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
       train_loss = model.forward_pass(training_X, training_y)
       model.backward_pass()
       valid_loss = model.loss_func(X_valid, y_valid)
+      print(valid_loss)
 
       #updating weights and biases
       for layer in model.layers:
         if isinstance(layer, Layer):
-          layer.w = layer.w + config['momentum_gamma'] * layer.momentum_unit[0] + config['learning_rate'] * layer.d_w
-          layer.b = layer.b + config['momentum_gamma'] * layer.momentum_unit[1] + config['learning_rate'] * layer.d_b
+          #layer.w = layer.w  - config['momentum_gamma'] * layer.momentum_unit[0] - config['learning_rate'] * layer.d_w
+          layer.w = layer.w - config['learning_rate'] * layer.d_w
+          #layer.b = layer.b - config['momentum_gamma'] * layer.momentum_unit[1] - config['learning_rate'] * layer.d_b
+          layer.b = layer.b - config['learning_rate'] * layer.d_b
 
       training_error.append(train_loss)
       validation_error.append(valid_loss)
