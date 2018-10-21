@@ -243,97 +243,20 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
   Write the code to train the network. Use values from config to set parameters
   such as L2 penalty, number of epochs, momentum, etc.
   """
-  """
-    Train this neural network using stochastic gradient descent.
-    Inputs:
-    - X: A numpy array of shape (N, D) giving training data.
-    - y: A numpy array f shape (N,) giving training labels; y[i] = c means that
-      X[i] has label c, where 0 <= c < C.
-    - X_val: A numpy array of shape (N_val, D) giving validation data.
-    - y_val: A numpy array of shape (N_val,) giving validation labels.
-    - learning_rate: Scalar giving learning rate for optimization.
-    - learning_rate_decay: Scalar giving factor used to decay the learning rate
-      after each epoch.
-    - reg: Scalar giving regularization strength.
-    - num_iters: Number of steps to take when optimizing.
-    - batch_size: Number of training examples to use per step.
-    - verbose: boolean; if true print progress during optimization.
-    """
-    num_train = X.shape[0]
-    iterations_per_epoch = max(num_train / batch_size, 1)
-
-    # Use SGD to optimize the parameters in self.model
-    loss_history = []
-    train_acc_history = []
-    val_acc_history = []
-
-    for it in xrange(num_iters):
-      X_batch = None
-      y_batch = None
-
-      #########################################################################
-      # TODO: Create a random minibatch of training data and labels, storing  #
-      # them in X_batch and y_batch respectively.                             #
-      #########################################################################
-      sample_indices = np.random.choice(np.arange(num_train), batch_size)
-      X_batch = X[sample_indices]
-      y_batch = y[sample_indices]
-      #########################################################################
-      #                             END OF YOUR CODE                          #
-      #########################################################################
-
-      # Compute loss and gradients using the current minibatch
-      loss, grads = self.loss(X_batch, y=y_batch, reg=reg)
-      loss_history.append(loss)
-
-      #########################################################################
-      # TODO: Use the gradients in the grads dictionary to update the         #
-      # parameters of the network (stored in the dictionary self.params)      #
-      # using stochastic gradient descent. You'll need to use the gradients   #
-      # stored in the grads dictionary defined above.                         #
-      #########################################################################
-      self.params['W1'] += -learning_rate * grads['W1']
-      self.params['b1'] += -learning_rate * grads['b1']
-      self.params['W2'] += -learning_rate * grads['W2']
-      self.params['b2'] += -learning_rate * grads['b2']
-      #########################################################################
-      #                             END OF YOUR CODE                          #
-      #########################################################################
-
-      if verbose and it % 100 == 0:
-        print 'iteration %d / %d: loss %f' % (it, num_iters, loss)
-
-      # Every epoch, check train and val accuracy and decay learning rate.
-      if it % iterations_per_epoch == 0:
-        # Check accuracy
-        train_acc = (self.predict(X_batch) == y_batch).mean()
-        val_acc = (self.predict(X_val) == y_val).mean()
-        train_acc_history.append(train_acc)
-        val_acc_history.append(val_acc)
-
-        # Decay learning rate
-        learning_rate *= learning_rate_decay
-
-    return {
-      'loss_history': loss_history,
-      'train_acc_history': train_acc_history,
-      'val_acc_history': val_acc_history,
-    }
-
+  return 0
 
 def test(model, X_test, y_test, config):
   """
   Write code to run the model on the data passed as input and return accuracy.
   """
   numCorrect = 0
-  count = 0
-  loss, prediction = model.forward_pass(X_test)
-  for i in range(prediction):
+  numExamples = X_test.shape[0]
+  loss, prediction = model.forward_pass(X_test, y_test)
+  for i in range(len(prediction)):
     if (np.argmax(prediction[i]) == np.argmax(y_test[i])):
       numCorrect = numCorrect + 1
-    count = count + 1
 
-  return numCorrect / count
+  return numCorrect / numExamples
 
 
 if __name__ == "__main__":
@@ -346,5 +269,6 @@ if __name__ == "__main__":
   X_train, y_train = load_data(train_data_fname)
   X_valid, y_valid = load_data(valid_data_fname)
   X_test, y_test = load_data(test_data_fname)
-  trainer(model, X_train, y_train, X_valid, y_valid, config)
+  # trainer(model, X_train, y_train, X_valid, y_valid, config)
   test_acc = test(model, X_test, y_test, config)
+  print(test_acc)
