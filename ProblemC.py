@@ -14,12 +14,14 @@ def main():
 	config = neuralnet.config
 	config['epochs'] = 100
 
-	#iterate 10 times:
-		#hold out 10% of the training data in each iteration
-		#train the model with early stop
-		#record # of epochs until the validation set had lowest error (early-stop point)
 	
+	nnet = neuralnet.Neuralnetwork(config)
 
+	neuralnet.trainer(nnet, X_train, y_train, X_valid, y_valid, nnet.config)
+
+	#record # of epochs until the validation set had lowest error (early-stop point)
+	
+	
 	#put # of epochs needed to find validation set minimum in a table
 	#find the average # of epochs until validation set is at minimum
 

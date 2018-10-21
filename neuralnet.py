@@ -1,5 +1,6 @@
 import numpy as np
 import pickle
+import copy
 
 
 config = {}
@@ -141,6 +142,9 @@ class Layer():
     self.d_w = None  # Save the gradient w.r.t w in this
     self.d_b = None  # Save the gradient w.r.t b in this
 
+    self.momentum_unit = [np.zeros(shape = self.w.shape), np.zeros(shape = self.b.shape)]
+    self.count = 0
+
   def forward_pass(self, x):
     """
     Write the code for forward pass through a layer. Do not apply activation function here.
@@ -159,6 +163,11 @@ class Layer():
     self.d_x = np.dot(delta, self.w.T)
     self.d_b = delta
     self.d_w = np.dot(delta.T, self.x).T
+
+    #changing momentum averafe
+    self.momentum_unit[0] = self.momentum_unit[0] * (self.count / (self.count + 1)) + ((self.d_w) / (self.count + 1))
+    self.momentum_unit[1] = self.momentum_unit[1] * (self.count / (self.count + 1)) + ((self.d_b) / (self.count + 1))
+    self.count = self.count + 1
 
     return self.d_x
 
@@ -202,6 +211,9 @@ class Neuralnetwork():
     negLogLikelihood = - np.log(softmax(logits))
     loss = negLogLikelihood.dot(targets)
 
+    """
+    regularization function used is: ||w|| / 2
+    """
     regularizationTotal = 0
     for layer in self.layers:
       if isinstance(layer, Layer):
@@ -222,27 +234,64 @@ class Neuralnetwork():
 
 
 
-
 def trainer(model, X_train, y_train, X_valid, y_valid, config):
   """
   Write the code to train the network. Use values from config to set parameters
   such as L2 penalty, number of epochs, momentum, etc.
   """
+  if (config['momentum'] == False):
+    config['momentum'] = 0.0
+
   training_error = []
   validation_error = []
 
+  numSamples = config['batch_size']
+  samples = np.random.choice(len(X_train), numSamples)
+  training_X = X_train[samples]
+  training_y = y_train[samples]
 
   #2 cases for early stop or not
   if (config['early_stop']):
-    trainError = float('Inf')
-    valid_Error = float('Inf')
+    best_valid_Error = float('Inf')
+    #find a way to save the layers at the best 
     bestWeights = model.layers
-  #else:
 
-  #sample the batch size from the training data
-  #use online learning with stochastic samplings
-  #use momentum in update rule
-  #use learning rate
+    for iteration in range(config['epochs']):
+      train_loss = model.forward_pass(training_X, training_y)
+      model.backward_pass()
+      valid_loss = model.loss_func(X_valid, y_valid)
+
+      #updating weights and biases
+      for layer in model.layers:
+        if isinstance(layer, Layer):
+          layer.w = layer.w + config['momentum_gamma'] * layer.momentum_unit[0] + config['learning_rate'] * layer.d_w
+          layer.b = layer.b + config['momentum_gamma'] * layer.momentum_unit[1] + config['learning_rate'] * layer.d_b
+
+      training_error.append(train_loss)
+      validation_error.append(valid_loss)
+
+      if ((valid_loss < best_valid_Error) and (iteration > config['early_stop_epoch'])) :
+        best_valid_Error = valid_loss
+        bestWeights = copy.deepcopy(model.layers)
+
+    return training_error, validation_error, bestWeights
+
+  else:
+    for iteration in range(config['epochs']):
+      train_loss = model.forward_pass(training_X, training_y)
+      model.backward_pass()
+      valid_loss = model.loss_func(X_valid, y_valid)
+
+      #updating weights and biases
+      for layer in model.layers:
+        if isinstance(layer, Layer):
+          layer.w = layer.w + config['momentum_gamma'] * layer.momentum_unit[0] + config['learning_rate'] * layer.d_w
+          layer.b = layer.b + config['momentum_gamma'] * layer.momentum_unit[1] + config['learning_rate'] * layer.d_b
+
+      training_error.append(train_loss)
+      validation_error.append(valid_loss)
+
+    return training_error, validation_error, model.layers
 
 
 def test(model, X_test, y_test, config):
@@ -250,6 +299,7 @@ def test(model, X_test, y_test, config):
   Write code to run the model on the data passed as input and return accuracy.
   """
   accuracy = 0
+  
   return accuracy
 
 
