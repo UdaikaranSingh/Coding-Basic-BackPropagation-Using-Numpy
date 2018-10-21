@@ -208,9 +208,15 @@ class Neuralnetwork():
     '''
     find cross entropy loss between logits and targets
     '''
-    negLogLikelihood = - np.log(softmax(logits))
-    loss = negLogLikelihood.T.dot(targets)
-    loss = np.sum(loss)
+    # negLogLikelihood = - np.log(softmax(logits))
+    # loss = negLogLikelihood.T.dot(targets)
+    # loss = np.sum(loss)
+
+    m = targets.argmax(axis=1).shape[0]
+    p = softmax(logits)
+
+    log_likelihood = -np.log(p[range(m), targets.argmax(axis=1)])
+    loss = np.sum(log_likelihood) / m
     """
     regularization function used is: ||w|| / 2
     """
@@ -232,8 +238,6 @@ class Neuralnetwork():
       delta = layer.backward_pass(delta)
 
 
-
-
 def trainer(model, X_train, y_train, X_valid, y_valid, config):
   """
   Write the code to train the network. Use values from config to set parameters
@@ -253,24 +257,24 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
   #2 cases for early stop or not
   if (config['early_stop']):
     best_valid_Error = float('Inf')
-    #find a way to save the layers at the best 
+    #find a way to save the layers at the best
     bestWeights = model.layers
     bestNumEpoch = 0
     minElements = config['early_stop_epoch']
 
     for iteration in range(config['epochs']):
-      train_loss = model.forward_pass(training_X, training_y)
+      train_loss, out1 = model.forward_pass(training_X, training_y)
       model.backward_pass()
-      valid_loss = model.loss_func(X_valid, y_valid)
+      valid_loss, out2 = model.forward_pass(X_valid, y_valid)
       print(valid_loss)
 
       #updating weights and biases
       for layer in model.layers:
         if isinstance(layer, Layer):
           #layer.w = layer.w  - config['momentum_gamma'] * layer.momentum_unit[0] - config['learning_rate'] * layer.d_w
-          layer.w = layer.w - config['learning_rate'] * layer.d_w
+          layer.w = layer.w + config['learning_rate'] * layer.d_w
           #layer.b = layer.b - config['momentum_gamma'] * layer.momentum_unit[1] - config['learning_rate'] * layer.d_b
-          layer.b = layer.b - config['learning_rate'] * layer.d_b
+          layer.b = layer.b + config['learning_rate'] * layer.d_b
 
       training_error.append(train_loss)
       validation_error.append(valid_loss)
