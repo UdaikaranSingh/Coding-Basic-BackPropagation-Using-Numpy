@@ -75,8 +75,6 @@ class Activation:
     elif self.activation_type == "ReLU":
       grad = self.grad_ReLU()
 
-      print('DELTA FOR ACTIVATION')
-
     return grad * delta
 
   def sigmoid(self, x):
@@ -157,23 +155,10 @@ class Layer():
     Write the code for backward pass. This takes in gradient from its next layer as input,
     computes gradient for its weights and the delta to pass to its previous layers.
     """
-    # print("units in", self.w.shape[0])
-    # print("units out", self.w.shape[1])
-    # print("Delta Shape", delta.shape)
-    # print("w shape", self.w.shape)
-    # print("b shape", self.b.shape)
-    # print("x shape", self.x.shape)
-    # print("a shape", self.a.shape)
 
-    # print("dot product:", self.x.T.dot(delta).shape)
-
-    # self.d_w = (1. / delta.shape[1]) * np.dot(delta.T, self.x).T
-    # self.d_b = (1. / delta.shape[1]) * np.sum(delta, axis = 1, keepdims = True)
-
-    print('DELTA IN BACK PASS FOR LAYER')
     self.d_x = np.dot(delta, self.w.T)
-    self.d_b = -delta
-    self.d_w = -np.dot(delta.T, self.x).T
+    self.d_b = delta
+    self.d_w = np.dot(delta.T, self.x).T
 
     return self.d_x
 
@@ -230,16 +215,10 @@ class Neuralnetwork():
     implement the backward pass for the whole network.
     hint - use previously built functions.
     '''
-    delta = self.targets - self.y
-    #print('FIRST DELTA IS {}'.format(delta))
-    i = 0
-    for layer in reversed(self.layers):
-        if i % 2 == 0:
-            delta =
-        else:
-            delta = layer.backward_pass(delta)
-      print('DELTA LAYER {0}'.format(i))
-      i += 1
+    delta = self.targets - softmax(self.y)
+    for layer in reversed(self.layers):     # need to stop at input layer
+      delta = layer.backward_pass(delta)
+
 
 
 
