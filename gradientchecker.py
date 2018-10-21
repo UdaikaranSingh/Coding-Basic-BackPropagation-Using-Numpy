@@ -10,3 +10,8 @@ def gradient_check(loss_func, weight, gradient, epsilon):     # can also put in 
 
 
     # can also do a forward pass on E(w + e) and E(w - e) before doing this computation
+
+    """
+    Process to solve this:
+    
+    """

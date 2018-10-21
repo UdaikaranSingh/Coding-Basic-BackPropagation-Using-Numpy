@@ -15,7 +15,7 @@ def main():
 	#change based on answer in part C
 	neuralnet.config['epochs'] = 100
 
-	testshapes = [[784, 25, 25, 10], [784, 100, 100, 10], [784, 7, 7, 7, 7, 10]]
+	testshapes = [[784, 25, 10], [784, 100, 10], [784, 47, 47, 10]]
 
 	for shape in testshapes:
 		neuralnet.config['layer_specs'] = shape
