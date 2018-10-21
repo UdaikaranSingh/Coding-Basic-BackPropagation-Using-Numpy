@@ -228,6 +228,9 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
   Write the code to train the network. Use values from config to set parameters
   such as L2 penalty, number of epochs, momentum, etc.
   """
+  training_error = []
+  validation_error = []
+
 
   #2 cases for early stop or not
   if (config['early_stop']):

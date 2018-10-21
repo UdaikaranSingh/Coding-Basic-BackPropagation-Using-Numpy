@@ -71,9 +71,7 @@ def main():
             check_error(error_b, "Layer{} Biases".format(layer_no))
             check_error(error_d_w, "Layer{} Weight Gradient".format(layer_no))
             check_error(error_d_b, "Layer{} Bias Gradient".format(layer_no))
-
-            print(np.abs(benchmark_data['nnet'].layers[layer_idx].d_w)[0][0])
-            print(layer.d_w[0][0])
+            
 
 
     
