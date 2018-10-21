@@ -37,7 +37,7 @@ def load_data(fname):
   with open('data/' + fname, 'rb') as f:
       data_set = pickle.load(f)
       for i in data_set:
-          images.append(i[0:len(i)-2])
+          images.append(i[0:len(i)-1])
           unencoded_labels.append(i[len(i)-1])
 
   for j in unencoded_labels:
@@ -209,8 +209,8 @@ class Neuralnetwork():
     find cross entropy loss between logits and targets
     '''
     negLogLikelihood = - np.log(softmax(logits))
-    loss = negLogLikelihood.dot(targets)
-
+    loss = negLogLikelihood.T.dot(targets)
+    loss = np.sum(loss)
     """
     regularization function used is: ||w|| / 2
     """
@@ -256,6 +256,7 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
     #find a way to save the layers at the best 
     bestWeights = model.layers
     bestNumEpoch = 0
+    minElements = config['early_stop_epoch']
 
     for iteration in range(config['epochs']):
       train_loss = model.forward_pass(training_X, training_y)
@@ -271,7 +272,7 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
       training_error.append(train_loss)
       validation_error.append(valid_loss)
 
-      if ((valid_loss < best_valid_Error) and (iteration > config['early_stop_epoch'])) :
+      if ((valid_loss < best_valid_Error) and (iteration > minElements)) :
         best_valid_Error = valid_loss
         bestWeights = copy.deepcopy(model.layers)
         bestNumEpoch = iteration + 1

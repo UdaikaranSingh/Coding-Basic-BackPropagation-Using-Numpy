@@ -15,7 +15,7 @@ def main():
 	neuralnet.config['epochs'] = 100
 	neuralnet.config['momentum'] = True
 
-	nnet = neuralnet.Neuralnetwork(config)
+	nnet = neuralnet.Neuralnetwork(neuralnet.config)
 
 	training_errors, validation_errors, best_model, numEpochs = neuralnet.trainer(nnet, X_train, y_train, X_valid, y_valid, nnet.config)
 
