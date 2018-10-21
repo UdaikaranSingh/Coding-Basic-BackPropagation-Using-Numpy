@@ -255,6 +255,7 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
     best_valid_Error = float('Inf')
     #find a way to save the layers at the best 
     bestWeights = model.layers
+    bestNumEpoch = 0
 
     for iteration in range(config['epochs']):
       train_loss = model.forward_pass(training_X, training_y)
@@ -273,8 +274,9 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
       if ((valid_loss < best_valid_Error) and (iteration > config['early_stop_epoch'])) :
         best_valid_Error = valid_loss
         bestWeights = copy.deepcopy(model.layers)
+        bestNumEpoch = iteration + 1
 
-    return training_error, validation_error, bestWeights
+    return training_error, validation_error, bestWeights, bestNumEpoch
 
   else:
     for iteration in range(config['epochs']):
@@ -291,16 +293,22 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
       training_error.append(train_loss)
       validation_error.append(valid_loss)
 
-    return training_error, validation_error, model.layers
+    return training_error, validation_error, model.layers, config['epochs']
 
 
 def test(model, X_test, y_test, config):
   """
   Write code to run the model on the data passed as input and return accuracy.
   """
-  accuracy = 0
-  
-  return accuracy
+  numCorrect = 0
+  count = 0
+  loss, prediction = model.forward_pass(X_test)
+  for i in range(prediction):
+    if (np.argmax(prediction[i]) == np.argmax(y_test[i])):
+      numCorrect = numCorrect + 1
+    count = count + 1
+
+  return numCorrect / count
 
 
 if __name__ == "__main__":
