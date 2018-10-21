@@ -11,20 +11,28 @@ def main():
 	X_valid, y_valid = neuralnet.load_data(valid_data_fname)
 	X_test, y_test = neuralnet.load_data(test_data_fname)
 
-	config = neuralnet.config
 
 
 	activation_functions = ["sigmoid", "ReLU"]
 
-	"""
-	complete this based on Part C
-	Use the # of epochs found in part C
-	"""
+	#change based on results of part C
+	neuralnet.config['epochs'] = 0
+	
 
-	#complete for-loop on each activation function
-		#train the model
-		#report accuracy of the model on test set
-		#plot errors (2) to epochs
+	for function in activation_functions:
+		neuralnet.config[activation] = function
+		network = neuralnet.Neuralnetwork(neuralnet.config)
+
+		training_error, validation_error, best_model = neuralnet.trainer(network, X_train, y_train, X_valid, y_valid, network.config)
+		
+		network.layers = best_model
+
+		accuracy = neuralnet.test(network, X_test, y_test, network.config)
+
+		print("Activation Function Used: ", function)
+		print("Accuracy: ", accuracy)
+
+		#plot errors
 		#export plot as image
 
 

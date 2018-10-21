@@ -13,6 +13,7 @@ def main():
 	X_test, y_test = neuralnet.load_data(test_data_fname)
 
 	neuralnet.config['epochs'] = 100
+	neuralnet.config['momentum'] = True
 
 	nnet = neuralnet.Neuralnetwork(config)
 
@@ -24,6 +25,7 @@ def main():
 
 	accuracy = neuralnet.test(nnet, X_test, y_test)
 	print("accuracy: ", accuracy)
+
 	#record error (on training and validation)
 	#report the accruacy of model (on test set)
 	#plot errors against # of epochs

@@ -12,21 +12,27 @@ def main():
 	X_test, y_test = neuralnet.load_data(test_data_fname)
 
 
-	config = neuralnet.config
-	config['epochs'] = 100
+	#change based on answer in part C
+	neuralnet.config['epochs'] = 100
 
-	#test with 25 hidden units
-	#track error and plot
-	#save plot
+	testshapes = [[784, 25, 25, 10], [784, 100, 100, 10], [784, 25, 25, 25, 25, 10]]
 
-	#test with 100 hidden units
-	#track error and plot
-	#save plot
+	for shape in testshapes:
+		neuralnet.config['layer_specs'] = shape
 
+		network = neuralnet.Neuralnetwork(neuralnet.config)
 
-	#test with 2 hidden layers with 25 hidden layers each
-	#track error and plot
-	#save plot
+		training_error, validation_error, best_model = neuralnet.trainer(network, X_train, y_train, X_valid, y_valid, network.config)
+		
+		network.layers = best_model
+
+		accuracy = neuralnet.test(network, X_test, y_test, network.config)
+
+		print("Shape: ", shape)
+		print("Accuracy", accuracy)
+		
+		#plot
+		#save the plot
 
 if __name__ == '__main__':
   main()
