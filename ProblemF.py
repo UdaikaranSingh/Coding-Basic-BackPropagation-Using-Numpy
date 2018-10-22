@@ -40,6 +40,7 @@ def main():
 		plt.title("Training with " + str(shape) + " Shape")
 		name = "partF_" + str(shape) + ".png"
 		plt.savefig(name)
+		plt.close()
 
 if __name__ == '__main__':
   main()

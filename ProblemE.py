@@ -23,7 +23,7 @@ def main():
 	
 
 	for function in activation_functions:
-		neuralnet.config[activation] = function
+		neuralnet.config['activation'] = function
 		network = neuralnet.Neuralnetwork(neuralnet.config)
 
 		training_errors, validation_errors, best_model, numEpochs = neuralnet.trainer(network, X_train, y_train, X_valid, y_valid, network.config)
@@ -38,9 +38,10 @@ def main():
 		plt.plot(range(len(validation_errors)), validation_errors,"ro", color = "red")
 		plt.xlabel("Epochs")
 		plt.ylabel("Percentage Correct")
-		plt.title("Training with " + function " Function")
+		plt.title("Training with " + function + " Function")
 		name = "partE_" + str(function) + ".png"
 		plt.savefig(name)
+		plt.close()
 
 
 if __name__ == '__main__':
