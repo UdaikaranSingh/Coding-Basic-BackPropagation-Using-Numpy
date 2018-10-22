@@ -26,7 +26,7 @@ def main():
 		neuralnet.config[activation] = function
 		network = neuralnet.Neuralnetwork(neuralnet.config)
 
-		training_error, validation_error, best_model = neuralnet.trainer(network, X_train, y_train, X_valid, y_valid, network.config)
+		training_error, validation_error, best_model, numEpochs = neuralnet.trainer(network, X_train, y_train, X_valid, y_valid, network.config)
 		
 		network.layers = best_model
 		accuracy = neuralnet.test(network, X_test, y_test, network.config)
