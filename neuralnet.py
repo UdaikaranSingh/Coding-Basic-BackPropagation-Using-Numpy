@@ -304,11 +304,15 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
       best_found = True
 
     #adds training and validation set accuracy to list
-    training_accuracy.append(test(model, X_train, y_train, model.config))
-    validation_accuracy.append(test(model, X_valid, y_valid, model.config))
+    training_acc = test(model, X_train, y_train, model.config)
+    valid_acc = test(model, X_valid, y_valid, model.config)
 
-    print ("training accuracy: ", test(model, X_train, y_train, model.config))
-    print("training loss: ", cross_entropy(model, X_train, y_train, model.config['L2_penalty']))
+    #adding to lists (to be returns by method)
+    training_accuracy.append(training_acc)
+    validation_accuracy.append(valid_acc)
+
+    print ("training accuracy: ", training_acc)
+    print("validation accuracy: ", valid_acc)
     #print ("validation", test(model, X_valid, y_valid, model.config))
     #print ("testing", test(model, X_test, y_test, model.config))
 
