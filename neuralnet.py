@@ -273,7 +273,7 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
   print (test(model, X_batch, y_batch, model.config))
   count = 0
   validation_error = float("inf")
-  best_model = model.layer
+  best_model = model.layers
   best_found = False
   best_epoch = 0
   for i in range(numEpochs):
@@ -304,9 +304,9 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
     validation_accuracy.append(test(model, X_valid, y_valid, model.config))
 
     print ("training", test(model, X_train, y_train, model.config))
-    #print(cross_entropy(model, X_train, y_train))
-    print ("validation", test(model, X_valid, y_valid, model.config))
-    print ("testing", test(model, X_test, y_test, model.config))
+    print(cross_entropy(model, X_train, y_train))
+    #print ("validation", test(model, X_valid, y_valid, model.config))
+    #print ("testing", test(model, X_test, y_test, model.config))
 
   if (best_found):
     return training_accuracy, validation_accuracy, best_model, best_epoch
