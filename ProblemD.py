@@ -30,10 +30,15 @@ def main():
 
 		print("Regularization Constant: ", regFactor)
 		print("Accuracy on Test Set: ", accuracy)
-		
-		#plot data 
-		#export plot to image
 		print()
+		
+		plt.plot(range(len(training_errors)), training_errors,"ro", color = "blue")
+		plt.plot(range(len(validation_errors)), validation_errors,"ro", color = "red")
+		plt.set_xlabel("Epochs")
+		plt.set_ylabel("Percentage Correct")
+		plt.set_title("Training with regularization factor: " + regFactor)
+		name = "partD_" + str(regFactor) + ".png"
+		plt.savefig(name)
 
 		
 if __name__ == '__main__':

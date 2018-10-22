@@ -23,8 +23,16 @@ def main():
 	print(training_errors)
 	print(validation_errors)
 
+	nnet.layers = best_model
 	accuracy = neuralnet.test(nnet, X_test, y_test, nnet.config)
 	print("accuracy: ", accuracy)
+
+	plt.plot(range(len(training_errors)), training_errors,"ro", color = "blue")
+	plt.plot(range(len(validation_errors)), validation_errors,"ro", color = "red")
+	plt.set_xlabel("Epochs")
+	plt.set_ylabel("Percentage Correct")
+	plt.set_title("Training on MNIST Dataset")
+	plt.savefig('partC.png')
 
 	#record error (on training and validation)
 	#report the accruacy of model (on test set)

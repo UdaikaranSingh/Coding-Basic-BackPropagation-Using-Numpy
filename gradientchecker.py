@@ -1,5 +1,6 @@
 import neuralnet
 import numpy as np
+import matplotlib as plt
 
 def gradient_check(loss_func, weight, gradient, epsilon):     # can also put in a bias in the weight input
     epsilon_squared = np.power(epsilon)

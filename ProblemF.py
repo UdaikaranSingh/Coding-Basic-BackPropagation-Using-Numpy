@@ -25,14 +25,18 @@ def main():
 		training_error, validation_error, best_model = neuralnet.trainer(network, X_train, y_train, X_valid, y_valid, network.config)
 		
 		network.layers = best_model
-
 		accuracy = neuralnet.test(network, X_test, y_test, network.config)
 
 		print("Shape: ", shape)
 		print("Accuracy", accuracy)
 
-		#plot
-		#save the plot
+		plt.plot(range(len(training_errors)), training_errors,"ro", color = "blue")
+		plt.plot(range(len(validation_errors)), validation_errors,"ro", color = "red")
+		plt.set_xlabel("Epochs")
+		plt.set_ylabel("Percentage Correct")
+		plt.set_title("Training with " + str(shape) + " Shape")
+		name = "partF_" + str(shape) + ".png"
+		plt.savefig(name)
 
 if __name__ == '__main__':
   main()

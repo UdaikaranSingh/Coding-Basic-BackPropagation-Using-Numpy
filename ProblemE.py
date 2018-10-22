@@ -26,14 +26,18 @@ def main():
 		training_error, validation_error, best_model = neuralnet.trainer(network, X_train, y_train, X_valid, y_valid, network.config)
 		
 		network.layers = best_model
-
 		accuracy = neuralnet.test(network, X_test, y_test, network.config)
 
 		print("Activation Function Used: ", function)
 		print("Accuracy: ", accuracy)
 
-		#plot errors
-		#export plot as image
+		plt.plot(range(len(training_errors)), training_errors,"ro", color = "blue")
+		plt.plot(range(len(validation_errors)), validation_errors,"ro", color = "red")
+		plt.set_xlabel("Epochs")
+		plt.set_ylabel("Percentage Correct")
+		plt.set_title("Training with " + function " Function")
+		name = "partE_" + str(function) + ".png"
+		plt.savefig(name)
 
 
 if __name__ == '__main__':
