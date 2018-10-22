@@ -165,15 +165,11 @@ class Layer():
     #add regularization term
     self.d_x = np.dot(delta, self.w.T)
     self.d_b = delta
-    self.d_w = np.dot(delta.T, self.x).T + 
-
+    self.d_w = np.dot(delta.T, self.x).T 
     """
-    #updating momentum
-    if (self.count > 0):
-      momentumUpdate(self.momentum_unit[0], old_d_w, self.d_w)
-      momentumUpdate(self.momentum_unit[1], old_d_b, self.d_b)
-    self.count = self.count + 1
+    Add a 2 c w^l to the derivatives
     """
+    #add way to update momentum 
 
     return self.d_x
 
@@ -216,7 +212,9 @@ class Neuralnetwork():
       #updating outputs
       self.y = softmax(curOut)
       #computing loss
-      loss = self.loss_func(self.y, self.targets)
+      #computed loss in different part of code
+      #loss = self.loss_func(self.y, self.targets)
+      loss = 0
 
     return loss, self.y
 
@@ -228,7 +226,7 @@ class Neuralnetwork():
     # loss = negLogLikelihood.T.dot(targets)
     # loss = np.sum(loss)
     
-    loss = -np.sum(targets*np.log(logits))
+    loss = - np.sum(targets*np.log(logits))
     """
     regularization function used is: ||w|| / 2
     """
@@ -271,7 +269,6 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
   training_accuracy = []
   validation_accuracy = []
 
-  print (test(model, X_batch, y_batch, model.config))
   count = 0
   validation_error = float("inf")
   best_model = model.layers
@@ -290,7 +287,7 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
           layer.b = layer.b + learning_rate * layer.d_b
 
     old_validation_error = validation_error
-    validation_error = cross_entropy(model, X_valid, y_valid)
+    validation_error = cross_entropy(model, X_valid, y_valid, model.config['L2_penalty'])
 
     if (validation_error > old_validation_error):
       count = count + 1
@@ -305,33 +302,32 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
     validation_accuracy.append(test(model, X_valid, y_valid, model.config))
 
     print ("training accuracy: ", test(model, X_train, y_train, model.config))
-    print("training loss: ", cross_entropy(model, X_train, y_train))
+    print("training loss: ", cross_entropy(model, X_train, y_train, model.config['L2_penalty']))
     #print ("validation", test(model, X_valid, y_valid, model.config))
     #print ("testing", test(model, X_test, y_test, model.config))
 
   if (best_found):
     return training_accuracy, validation_accuracy, best_model, best_epoch
   else:
-    return training_accuracy, validation_accuracy, model.layer, numEpochs
-
-def error_with_regularizaiton(model, X_set, y_set):
-  loss = cross_entropy(model, X_set, y_set)
+    return training_accuracy, validation_accuracy, model.layers, numEpochs
 
 
-
-def cross_entropy(model, X_set, y_set):
+def cross_entropy(model, X_set, y_set, regFactor):
   m = X_set.shape[0]
   model.forward_pass(X_set, y_set)
 
   p = model.y
 
-  # y = y_set.argmax(axis = 1)
-
-  # log_likelihood = - np.log(p[range(m),y])
-  # loss = np.sum(log_likelihood, axis = 0) / m
   loss = np.sum(-np.log(p) * y_set) / m 
 
-  return loss
+  regularizationTotal = 0
+  for layer in model.layers:
+    if isinstance(layer, Layer):
+      regularizationTotal = regularizationTotal + np.sum(np.power(layer.w,2))
+
+  total_loss = loss + (regFactor / 2) * regularizationTotal
+
+  return total_loss
 
 
 
