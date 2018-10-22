@@ -259,20 +259,35 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
   single_correct = y_train[0]
   
   for i in range(numEpochs):
-    training_error = 0
     for sample in range(batch_size):
-      training_error = training_error + model.forward_pass(X_batch[sample].reshape(1,784), y_batch[sample])[0]
+      model.forward_pass(X_batch[sample].reshape(1,784), y_batch[sample])[0]
       model.backward_pass()
       for layer in model.layers:
         if isinstance(layer, Layer):
           layer.w = layer.w + learning_rate * layer.d_w
           layer.b = layer.b + learning_rate * layer.d_b
     print (test(model, X_batch, y_batch, model.config))
-    print(training_error)
+    print(cross_entropy(model, X_train, y_train))
     #print (test(model, X_valid, X_valid, model.config))
 
 
+def error_with_regularizaiton(model, X_set, y_set):
+  loss = cross_entropy(model, X_set, y_set)
 
+def cross_entropy(model, X_set, y_set):
+  """
+  total_loss = 0
+  for sample in range(X_set.shape[0]):
+    print(sample)
+    model.forward_pass(X_set[sample], y_set[sample])
+    total_loss = total_loss + np.sum(np.log(softmax(model.y)) * y_set[sample])
+  return (- total_loss)
+  """
+  m = X_set.shape[0]
+  model.forward_pass(X_set, y_set)
+  total = np.sum(np.log(softmax(model.y)) * y_set) / m
+  total = - total
+  return total
 
 
 
