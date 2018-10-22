@@ -213,9 +213,9 @@ class Neuralnetwork():
       for curLayer in self.layers:
         curOut = curLayer.forward_pass(curOut)
       #updating outputs
-      self.y = curOut
+      self.y = softmax(curOut)
       #computing loss
-      #loss = self.loss_func(self.y, self.targets)
+      loss = self.loss_func(self.y, self.targets)
 
     return loss, self.y
 
@@ -226,11 +226,8 @@ class Neuralnetwork():
     # negLogLikelihood = - np.log(softmax(logits))
     # loss = negLogLikelihood.T.dot(targets)
     # loss = np.sum(loss)
-
-    p = softmax(logits)
-
-    log_likelihood = - np.log(p)
-    loss = np.sum(log_likelihood)
+    
+    loss = -np.sum(targets*np.log(logits))
     """
     regularization function used is: ||w|| / 2
     """
@@ -247,7 +244,7 @@ class Neuralnetwork():
     implement the backward pass for the whole network.
     hint - use previously built functions.
     '''
-    delta = self.targets - softmax(self.y)
+    delta = self.targets - self.y
     for layer in reversed(self.layers):     # need to stop at input layer
       delta = layer.backward_pass(delta)
 
@@ -287,9 +284,9 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
       for layer in model.layers:
         if isinstance(layer, Layer):
           #layer.w = layer.w + learning_rate * layer.d_w + momentum * layer.momentum_unit[0]
-          layer.w = layer.w + learning_rate * layer.d_w 
+          layer.w = layer.w + learning_rate * layer.d_w
           #layer.b = layer.b + learning_rate * layer.d_b + momentum * layer.momentum_unit[0]
-          layer.b = layer.b + learning_rate * layer.d_b 
+          layer.b = layer.b + learning_rate * layer.d_b
 
     old_validation_error = validation_error
     validation_error = cross_entropy(model, X_valid, y_valid)
@@ -325,7 +322,7 @@ def cross_entropy(model, X_set, y_set):
   m = X_set.shape[0]
   model.forward_pass(X_set, y_set)
 
-  p = softmax(model.y)
+  p = model.y
   y = y_set.argmax(axis = 1)
 
   log_likelihood = - np.log(p[range(m),y])
