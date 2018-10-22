@@ -7,7 +7,7 @@ config = {}
 config['layer_specs'] = [784, 50, 10]  # The length of list denotes number of hidden layers; each element denotes number of neurons in that layer; first element is the size of input layer, last element is the size of output layer.
 config['activation'] = 'sigmoid' # Takes values 'sigmoid', 'tanh' or 'ReLU'; denotes activation function for hidden layers
 config['batch_size'] = 1000  # Number of training samples per batch to be passed to network
-config['epochs'] = 50  # Number of epochs train the model
+config['epochs'] = 500  # Number of epochs train the model
 config['early_stop'] = True  # Implement early stopping or not
 config['early_stop_epoch'] = 5  # Number of epochs for which validation loss increases to be counted as overfitting
 config['L2_penalty'] = 0  # Regularization constant
@@ -266,8 +266,9 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
         if isinstance(layer, Layer):
           layer.w = layer.w + learning_rate * layer.d_w
           layer.b = layer.b + learning_rate * layer.d_b
-    print (test(model, X_batch, y_batch, model.config))
-    print(cross_entropy(model, X_train, y_train))
+    print ("training", test(model, X_train, y_train, model.config))
+    print ("testing", test(model, X_test, y_test, model.config))
+    #print(cross_entropy(model, X_train, y_train))
     #print (test(model, X_valid, X_valid, model.config))
 
 
