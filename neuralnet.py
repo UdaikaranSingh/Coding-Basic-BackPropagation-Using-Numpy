@@ -170,7 +170,7 @@ class Layer():
       self.momentum_unit[0] = momentumUpdate(self.momentum_unit[0], old_d_w, self.d_w)
       self.momentum_unit[1] = momentumUpdate(self.momentum_unit[1], old_d_b, self.d_b)
     self.count = self.count + 1
-    return self.d_x 
+    return self.d_x
 
 def momentumUpdate(oldmomentum, old_grad, new_grad):
   truth = ((old_grad * new_grad) > 0)
