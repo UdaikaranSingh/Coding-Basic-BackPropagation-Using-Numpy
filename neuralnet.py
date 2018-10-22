@@ -214,7 +214,7 @@ class Neuralnetwork():
         curOut = curLayer.forward_pass(curOut)
       #updating outputs
       self.y = softmax(curOut)
-      #computing loss
+      
       #computed loss in different part of code
       #loss = self.loss_func(self.y, self.targets)
       loss = 0
@@ -272,13 +272,18 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
   best_model = model.layers
   best_found = False
   best_epoch = 0
+  
   for i in range(numEpochs):
     print(i + 1)
     for sample in range(batch_size):
+      
+      #forwards pass & backpass
       model.forward_pass(X_batch[sample].reshape(1,784), y_batch[sample])[0]
       model.backward_pass()
+
       for layer in model.layers:
         if isinstance(layer, Layer):
+
           #checks if we apply momentum
           if (config['momentum'] == False):
             #updating weights
@@ -288,6 +293,7 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
             momentum = config['momentum_gamma']
             layer.w = layer.w + learning_rate * layer.d_w + momentum * layer.momentum_unit[0]
             layer.b = layer.b + learning_rate * layer.d_b + momentum * layer.momentum_unit[1]
+
     old_validation_error = validation_error
     validation_error = cross_entropy(model, X_valid, y_valid, model.config['L2_penalty'])
 
