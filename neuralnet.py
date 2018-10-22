@@ -13,7 +13,7 @@ config['early_stop_epoch'] = 2  # Number of epochs for which validation loss inc
 config['L2_penalty'] = 0  # Regularization constant
 config['momentum'] = True  # Denotes if momentum is to be applied or not
 config['momentum_gamma'] = 0.9  # Denotes the constant 'gamma' in momentum expression
-config['learning_rate'] = 0.01 # Learning rate of gradient descent algorithm
+config['learning_rate'] = 0.001 # Learning rate of gradient descent algorithm
 
 def softmax(x):
   """
@@ -162,9 +162,10 @@ class Layer():
     old_d_w = self.d_w
     old_d_b = self.d_b
 
+    #add regularization term
     self.d_x = np.dot(delta, self.w.T)
     self.d_b = delta
-    self.d_w = np.dot(delta.T, self.x).T
+    self.d_w = np.dot(delta.T, self.x).T + 
 
     """
     #updating momentum
@@ -303,8 +304,8 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
     training_accuracy.append(test(model, X_train, y_train, model.config))
     validation_accuracy.append(test(model, X_valid, y_valid, model.config))
 
-    print ("training", test(model, X_train, y_train, model.config))
-    print(cross_entropy(model, X_train, y_train))
+    print ("training accuracy: ", test(model, X_train, y_train, model.config))
+    print("training loss: ", cross_entropy(model, X_train, y_train))
     #print ("validation", test(model, X_valid, y_valid, model.config))
     #print ("testing", test(model, X_test, y_test, model.config))
 
@@ -323,10 +324,12 @@ def cross_entropy(model, X_set, y_set):
   model.forward_pass(X_set, y_set)
 
   p = model.y
-  y = y_set.argmax(axis = 1)
 
-  log_likelihood = - np.log(p[range(m),y])
-  loss = np.sum(log_likelihood, axis = 0) / m
+  # y = y_set.argmax(axis = 1)
+
+  # log_likelihood = - np.log(p[range(m),y])
+  # loss = np.sum(log_likelihood, axis = 0) / m
+  loss = np.sum(-np.log(p) * y_set) / m 
 
   return loss
 
