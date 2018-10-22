@@ -13,7 +13,7 @@ def main():
 
 
 	#found this as the optimal number of epochs from Part C
-	neuralnet.config['epochs'] = 33
+	neuralnet.config['epochs'] = 37
 
 	testshapes = [[784, 25, 10], [784, 100, 10], [784, 47, 47, 10]]
 
@@ -32,9 +32,9 @@ def main():
 
 		plt.plot(range(len(training_errors)), training_errors,"ro", color = "blue")
 		plt.plot(range(len(validation_errors)), validation_errors,"ro", color = "red")
-		plt.set_xlabel("Epochs")
-		plt.set_ylabel("Percentage Correct")
-		plt.set_title("Training with " + str(shape) + " Shape")
+		plt.xlabel("Epochs")
+		plt.ylabel("Percentage Correct")
+		plt.title("Training with " + str(shape) + " Shape")
 		name = "partF_" + str(shape) + ".png"
 		plt.savefig(name)
 

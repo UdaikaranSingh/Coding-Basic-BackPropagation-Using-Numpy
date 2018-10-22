@@ -1,7 +1,9 @@
 import neuralnet
 import numpy as np
 import pickle
-import matplotlib as plt
+import matplotlib as mpl
+mpl.use('TkAgg')
+import matplotlib.pyplot as plt
 
 def main():
 
@@ -12,8 +14,7 @@ def main():
 	X_valid, y_valid = neuralnet.load_data(valid_data_fname)
 	X_test, y_test = neuralnet.load_data(test_data_fname)
 
-	#found this as the optimal number of epochs from Part C
-	neuralnet.config['epochs'] = 36
+	neuralnet.config['epochs'] = 50
 
 	nnet = neuralnet.Neuralnetwork(neuralnet.config)
 
@@ -29,15 +30,10 @@ def main():
 
 	plt.plot(range(len(training_errors)), training_errors,"ro", color = "blue")
 	plt.plot(range(len(validation_errors)), validation_errors,"ro", color = "red")
-	plt.set_xlabel("Epochs")
-	plt.set_ylabel("Percentage Correct")
-	plt.set_title("Training on MNIST Dataset")
+	plt.xlabel("Epochs")
+	plt.ylabel("Percentage Correct")
+	plt.title("Training on MNIST Dataset")
 	plt.savefig('partC.png')
-
-	#record error (on training and validation)
-	#report the accruacy of model (on test set)
-	#plot errors against # of epochs
-	#export that plot to image
 
 
 

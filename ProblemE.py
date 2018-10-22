@@ -16,7 +16,7 @@ def main():
 	activation_functions = ["sigmoid", "ReLU"]
 
 	#found this as the optimal number of epochs from Part C
-	neuralnet.config['epochs'] = 36
+	neuralnet.config['epochs'] = 37
 	
 
 	for function in activation_functions:
@@ -33,9 +33,9 @@ def main():
 
 		plt.plot(range(len(training_errors)), training_errors,"ro", color = "blue")
 		plt.plot(range(len(validation_errors)), validation_errors,"ro", color = "red")
-		plt.set_xlabel("Epochs")
-		plt.set_ylabel("Percentage Correct")
-		plt.set_title("Training with " + function " Function")
+		plt.xlabel("Epochs")
+		plt.ylabel("Percentage Correct")
+		plt.title("Training with " + function " Function")
 		name = "partE_" + str(function) + ".png"
 		plt.savefig(name)
 

@@ -9,9 +9,9 @@ config['activation'] = 'sigmoid' # Takes values 'sigmoid', 'tanh' or 'ReLU'; den
 config['batch_size'] = 50000  # Number of training samples per batch to be passed to network
 config['epochs'] = 50  # Number of epochs train the model
 config['early_stop'] = True  # Implement early stopping or not
-config['early_stop_epoch'] = 2  # Number of epochs for which validation loss increases to be counted as overfitting
+config['early_stop_epoch'] = 5  # Number of epochs for which validation loss increases to be counted as overfitting
 config['L2_penalty'] = 0  # Regularization constant
-config['momentum'] = True  # Denotes if momentum is to be applied or not
+config['momentum'] = False  # Denotes if momentum is to be applied or not
 config['momentum_gamma'] = 0.9  # Denotes the constant 'gamma' in momentum expression
 config['learning_rate'] = 0.001 # Learning rate of gradient descent algorithm
 
@@ -164,12 +164,15 @@ class Layer():
 
     #add regularization term
     self.d_x = np.dot(delta, self.w.T)
-    self.d_b = delta
-    self.d_w = np.dot(delta.T, self.x).T 
-    """
-    Add a 2 c w^l to the derivatives
-    """
-    #add way to update momentum 
+    self.d_b = delta + config['L2_penalty'] * self.b
+    self.d_w = np.dot(delta.T, self.x).T + config['L2_penalty'] * self.w
+
+    #Way to update momentum term
+    if (config['momentum'] == True):
+      if (self.count > 0):
+        momentumUpdate(self.momentum_unit[0], old_d_w, self.d_w)
+        momentumUpdate(self.momentum_unit[1], old_d_b, self.d_b)
+      self.count = self.count + 1
 
     return self.d_x
 
@@ -177,7 +180,7 @@ def momentumUpdate(oldmomentum, old_grad, new_grad):
   truth = ((old_grad * new_grad) > 0)
   for i in range(old_grad.shape[0]):
     for y in range(old_grad.shape[1]):
-      if (truth[i][y] == True):
+      if (truth[i][y] == False):
         oldmomentum[i][y] = oldmomentum[i][y] + 0.05
       else:
         oldmomentum[i][y] = oldmomentum[i][y] * 0.95
@@ -222,11 +225,8 @@ class Neuralnetwork():
     '''
     find cross entropy loss between logits and targets
     '''
-    # negLogLikelihood = - np.log(softmax(logits))
-    # loss = negLogLikelihood.T.dot(targets)
-    # loss = np.sum(loss)
     
-    loss = - np.sum(targets*np.log(logits))
+    loss = - np.sum(targets * np.log(logits))
     """
     regularization function used is: ||w|| / 2
     """
@@ -253,15 +253,13 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
   Write the code to train the network. Use values from config to set parameters
   such as L2 penalty, number of epochs, momentum, etc.
   """
-  momentum = 0.0
-  if (config['momentum'] == False):
-    momentum = config['momentum_gamma']
 
   batch_size = config['batch_size']
   numEpochs = config['epochs']
   num_train = X_train.shape[0]
   learning_rate = config['learning_rate']
 
+  #getting sample based on batch size
   batch_ind = np.random.choice(num_train, batch_size)
   X_batch = X_train[batch_ind]
   y_batch = y_train[batch_ind]
@@ -281,23 +279,31 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
       model.backward_pass()
       for layer in model.layers:
         if isinstance(layer, Layer):
-          #layer.w = layer.w + learning_rate * layer.d_w + momentum * layer.momentum_unit[0]
-          layer.w = layer.w + learning_rate * layer.d_w
-          #layer.b = layer.b + learning_rate * layer.d_b + momentum * layer.momentum_unit[0]
-          layer.b = layer.b + learning_rate * layer.d_b
-
+          #checks if we apply momentum
+          if (config['momentum'] == False):
+            #updating weights
+            layer.w = layer.w + learning_rate * layer.d_w
+            layer.b = layer.b + learning_rate * layer.d_b
+          else:
+            momentum = config['momentum_gamma']
+            layer.w = layer.w + learning_rate * layer.d_w + momentum * layer.momentum_unit[0]
+            layer.b = layer.b + learning_rate * layer.d_b + momentum * layer.momentum_unit[1]
     old_validation_error = validation_error
     validation_error = cross_entropy(model, X_valid, y_valid, model.config['L2_penalty'])
 
+    #compares change of error on validation set
     if (validation_error > old_validation_error):
       count = count + 1
     else:
       count = 0
+
+    #if validation error goes up for multiple epochs, then we assume overfitting
     if (count == config['early_stop_epoch']):
       best_model = copy.deepcopy(model.layers)
       best_epoch = i + 1
       best_found = True
 
+    #adds training and validation set accuracy to list
     training_accuracy.append(test(model, X_train, y_train, model.config))
     validation_accuracy.append(test(model, X_valid, y_valid, model.config))
 
@@ -313,6 +319,11 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
 
 
 def cross_entropy(model, X_set, y_set, regFactor):
+  """
+  Loss function for softmax regression
+  implemented regression based on the function:
+  Loss = summation of w_ij ^2
+  """
   m = X_set.shape[0]
   model.forward_pass(X_set, y_set)
 

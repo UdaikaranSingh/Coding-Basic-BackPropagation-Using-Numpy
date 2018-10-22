@@ -13,6 +13,8 @@ def main():
 
 
 	#found this as the optimal number of epochs from Part C
+	# optimal value is about 37 epochs
+	# 37 * 1.1 is about 40 epochs
 	neuralnet.config['epochs'] = 40
 
 	regularization_constant_testers = [0.0001, 0.001, 0.01]
@@ -33,9 +35,9 @@ def main():
 		
 		plt.plot(range(len(training_errors)), training_errors,"ro", color = "blue")
 		plt.plot(range(len(validation_errors)), validation_errors,"ro", color = "red")
-		plt.set_xlabel("Epochs")
-		plt.set_ylabel("Percentage Correct")
-		plt.set_title("Training with regularization factor: " + regFactor)
+		plt.xlabel("Epochs")
+		plt.ylabel("Percentage Correct")
+		plt.title("Training with regularization factor: " + regFactor)
 		name = "partD_" + str(regFactor) + ".png"
 		plt.savefig(name)
 
