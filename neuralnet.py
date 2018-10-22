@@ -6,12 +6,12 @@ import copy
 config = {}
 config['layer_specs'] = [784, 50, 10]  # The length of list denotes number of hidden layers; each element denotes number of neurons in that layer; first element is the size of input layer, last element is the size of output layer.
 config['activation'] = 'sigmoid' # Takes values 'sigmoid', 'tanh' or 'ReLU'; denotes activation function for hidden layers
-config['batch_size'] = 100  # Number of training samples per batch to be passed to network
+config['batch_size'] = 10000  # Number of training samples per batch to be passed to network
 config['epochs'] = 100  # Number of epochs train the model
 config['early_stop'] = True  # Implement early stopping or not
 config['early_stop_epoch'] = 5  # Number of epochs for which validation loss increases to be counted as overfitting
 config['L2_penalty'] = 0  # Regularization constant
-config['momentum'] = True  # Denotes if momentum is to be applied or not
+config['momentum'] = False  # Denotes if momentum is to be applied or not
 config['momentum_gamma'] = 0.9  # Denotes the constant 'gamma' in momentum expression
 config['learning_rate'] = 0.01 # Learning rate of gradient descent algorithm
 
@@ -166,10 +166,6 @@ class Layer():
     self.d_b = delta
     self.d_w = np.dot(delta.T, self.x).T
     #updating momentum
-    if self.count > 0:
-      self.momentum_unit[0] = momentumUpdate(self.momentum_unit[0], old_d_w, self.d_w)
-      self.momentum_unit[1] = momentumUpdate(self.momentum_unit[1], old_d_b, self.d_b)
-    self.count = self.count + 1
     return self.d_x
 
 def momentumUpdate(oldmomentum, old_grad, new_grad):
@@ -278,11 +274,11 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
       for layer in model.layers:
         if isinstance(layer, Layer):
           #layer.w = layer.w + learning_rate * layer.d_w + momentum * layer.momentum_unit[0]
-          layer.w = layer.w + learning_rate * momentum * layer.momentum_unit[0] * layer.d_w 
+          layer.w = layer.w + learning_rate * layer.d_w 
           #layer.b = layer.b + learning_rate * layer.d_b + momentum * layer.momentum_unit[0]
-          layer.b = layer.b + learning_rate * momentum * layer.momentum_unit[1] * layer.d_b
+          layer.b = layer.b + learning_rate * layer.d_b
     print ("training", test(model, X_train, y_train, model.config))
-    #print(cross_entropy(model, X_train, y_train))
+    print(cross_entropy(model, X_train, y_train))
     #print ("validation", test(model, X_valid, y_valid, model.config))
     #print ("testing", test(model, X_test, y_test, model.config))
     #print (test(model, X_valid, X_valid, model.config))
@@ -301,8 +297,7 @@ def cross_entropy(model, X_set, y_set):
   y = y_set.argmax(axis = 1)
 
   log_likelihood = - np.log(p[range(m),y])
-  print(log_likelihood)
-  loss = np.sum(log_likelihood) / m
+  loss = np.sum(log_likelihood, axis = 0) / m
 
   return loss
 
