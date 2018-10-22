@@ -6,8 +6,8 @@ import copy
 config = {}
 config['layer_specs'] = [784, 50, 10]  # The length of list denotes number of hidden layers; each element denotes number of neurons in that layer; first element is the size of input layer, last element is the size of output layer.
 config['activation'] = 'sigmoid' # Takes values 'sigmoid', 'tanh' or 'ReLU'; denotes activation function for hidden layers
-config['batch_size'] = 1000  # Number of training samples per batch to be passed to network
-config['epochs'] = 500  # Number of epochs train the model
+config['batch_size'] = 50000  # Number of training samples per batch to be passed to network
+config['epochs'] = 10  # Number of epochs train the model
 config['early_stop'] = True  # Implement early stopping or not
 config['early_stop_epoch'] = 5  # Number of epochs for which validation loss increases to be counted as overfitting
 config['L2_penalty'] = 0  # Regularization constant
@@ -164,7 +164,7 @@ class Layer():
     self.d_b = delta
     self.d_w = np.dot(delta.T, self.x).T
 
-    #changing momentum averafe
+    #changing momentum average
     self.momentum_unit[0] = self.momentum_unit[0] * (self.count / (self.count + 1)) + ((self.d_w) / (self.count + 1))
     self.momentum_unit[1] = self.momentum_unit[1] * (self.count / (self.count + 1)) + ((self.d_b) / (self.count + 1))
     self.count = self.count + 1
@@ -242,6 +242,10 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
   Write the code to train the network. Use values from config to set parameters
   such as L2 penalty, number of epochs, momentum, etc.
   """
+  momentum = 0.0
+  if (config['momentum'] == False):
+    momentum = config['momentum_gamma']
+
   batch_size = config['batch_size']
   numEpochs = config['epochs']
   num_train = X_train.shape[0]
@@ -254,9 +258,6 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
   training_accuracy = []
 
   print (test(model, X_batch, y_batch, model.config))
-
-  single_train = np.asarray(X_train[0])
-  single_correct = y_train[0]
   
   for i in range(numEpochs):
     for sample in range(batch_size):
@@ -264,11 +265,14 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
       model.backward_pass()
       for layer in model.layers:
         if isinstance(layer, Layer):
+          #layer.w = layer.w + learning_rate * layer.d_w + momentum * layer.momentum_unit[0]
           layer.w = layer.w + learning_rate * layer.d_w
+          #layer.b = layer.b + learning_rate * layer.d_b + momentum * layer.momentum_unit[0]
           layer.b = layer.b + learning_rate * layer.d_b
     print ("training", test(model, X_train, y_train, model.config))
-    print ("testing", test(model, X_test, y_test, model.config))
-    #print(cross_entropy(model, X_train, y_train))
+    print(cross_entropy(model, X_train, y_train))
+    #print ("validation", test(model, X_valid, y_valid, model.config))
+    #print ("testing", test(model, X_test, y_test, model.config))
     #print (test(model, X_valid, X_valid, model.config))
 
 
@@ -276,14 +280,6 @@ def error_with_regularizaiton(model, X_set, y_set):
   loss = cross_entropy(model, X_set, y_set)
 
 def cross_entropy(model, X_set, y_set):
-  """
-  total_loss = 0
-  for sample in range(X_set.shape[0]):
-    print(sample)
-    model.forward_pass(X_set[sample], y_set[sample])
-    total_loss = total_loss + np.sum(np.log(softmax(model.y)) * y_set[sample])
-  return (- total_loss)
-  """
   m = X_set.shape[0]
   model.forward_pass(X_set, y_set)
   total = np.sum(np.log(softmax(model.y)) * y_set) / m
