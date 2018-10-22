@@ -4,7 +4,15 @@ import pickle
 import matplotlib as mpl
 mpl.use('TkAgg')
 import matplotlib.pyplot as plt
+
+"""
+importing all the problems
+"""
 import gradientchecker
+import ProblemC
+import ProblemD
+import ProblemE
+import ProblemF
 
 """
 This is the main file to run all the experiments
@@ -20,21 +28,21 @@ print()
 
 print("Part C: Finding Optimal # of Epochs")
 print()
-#run problem C
+ProblemC.main()
 print()
 
 print("Part D: Experiment with Regularization")
 print()
-#run problem D
+ProblemD.main()
 print()
 
 print("Part E: Experiment with Activations")
 print()
-#run problem E
+ProblemE.main()
 print()
 
 print("Part F: Experiment with Network Topology")
 print()
-#run problem F
+ProblemF.main()
 print()
 

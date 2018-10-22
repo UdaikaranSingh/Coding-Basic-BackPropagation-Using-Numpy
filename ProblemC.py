@@ -24,10 +24,13 @@ def main():
 	print(training_errors)
 	print(validation_errors)
 
+	#setting thte model to the best weights and biases
 	nnet.layers = best_model
 	accuracy = neuralnet.test(nnet, X_test, y_test, nnet.config)
-	print("accuracy: ", accuracy)
+	print("Accuracy on Test Set: ", accuracy)
 
+
+	#plotting results
 	plt.plot(range(len(training_errors)), training_errors,"ro", color = "blue")
 	plt.plot(range(len(validation_errors)), validation_errors,"ro", color = "red")
 	plt.xlabel("Epochs")

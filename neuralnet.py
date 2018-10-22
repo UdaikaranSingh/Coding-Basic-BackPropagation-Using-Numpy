@@ -113,7 +113,7 @@ class Activation:
     """
     Write the code for gradient through tanh activation function that takes in a numpy array and returns a numpy array.
     """
-    grad = (1 - np.power(self.tanh(self.x),2))
+    grad = (1 - np.power(self.tanh(self.x), 2))
     return grad
 
   def grad_ReLU(self):

@@ -15,7 +15,7 @@ def main():
 	X_test, y_test = neuralnet.load_data(test_data_fname)
 
 
-	#found this as the optimal number of epochs from Part C
+	# found this as the optimal number of epochs from Part C
 	# optimal value is about 37 epochs
 	# 37 * 1.1 is about 40 epochs
 	neuralnet.config['epochs'] = 40
@@ -24,6 +24,7 @@ def main():
 
 
 	for regFactor in regularization_constant_testers:
+
 		neuralnet.config['L2_penalty'] = regFactor
 		network = neuralnet.Neuralnetwork(neuralnet.config)
 
@@ -43,6 +44,7 @@ def main():
 		plt.title("Training with regularization factor: " + regFactor)
 		name = "partD_" + str(regFactor) + ".png"
 		plt.savefig(name)
+		
 
 		
 if __name__ == '__main__':
