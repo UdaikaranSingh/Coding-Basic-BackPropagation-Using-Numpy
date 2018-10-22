@@ -12,8 +12,8 @@ def main():
 	X_valid, y_valid = neuralnet.load_data(valid_data_fname)
 	X_test, y_test = neuralnet.load_data(test_data_fname)
 
-	neuralnet.config['epochs'] = 100
-	neuralnet.config['momentum'] = True
+	#found this as the optimal number of epochs from Part C
+	neuralnet.config['epochs'] = 33
 
 	nnet = neuralnet.Neuralnetwork(neuralnet.config)
 

@@ -12,8 +12,8 @@ def main():
 	X_test, y_test = neuralnet.load_data(test_data_fname)
 
 
-	#change based on answer in part C
-	neuralnet.config['epochs'] = 100
+	#found this as the optimal number of epochs from Part C
+	neuralnet.config['epochs'] = 33
 
 	testshapes = [[784, 25, 10], [784, 100, 10], [784, 47, 47, 10]]
 

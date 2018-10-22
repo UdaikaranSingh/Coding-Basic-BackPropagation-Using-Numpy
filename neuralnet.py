@@ -11,7 +11,7 @@ config['epochs'] = 50  # Number of epochs train the model
 config['early_stop'] = True  # Implement early stopping or not
 config['early_stop_epoch'] = 2  # Number of epochs for which validation loss increases to be counted as overfitting
 config['L2_penalty'] = 0  # Regularization constant
-config['momentum'] = False  # Denotes if momentum is to be applied or not
+config['momentum'] = True  # Denotes if momentum is to be applied or not
 config['momentum_gamma'] = 0.9  # Denotes the constant 'gamma' in momentum expression
 config['learning_rate'] = 0.01 # Learning rate of gradient descent algorithm
 
@@ -215,7 +215,7 @@ class Neuralnetwork():
       #updating outputs
       self.y = curOut
       #computing loss
-      loss = self.loss_func(self.y, self.targets)
+      #loss = self.loss_func(self.y, self.targets)
 
     return loss, self.y
 
