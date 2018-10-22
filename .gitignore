@@ -1,2 +1,5 @@
 
 ~$2Part2.docx
+data/MNIST_valid.pkl
+data/MNIST_train.pkl
+data/MNIST_test.pkl
