@@ -28,7 +28,7 @@ def main():
 		neuralnet.config['L2_penalty'] = regFactor
 		network = neuralnet.Neuralnetwork(neuralnet.config)
 
-		training_error, validation_error, best_model, numEpochs = neuralnet.trainer(network, X_train, y_train, X_valid, y_valid, network.config)
+		training_errors, validation_errors, best_model, numEpochs = neuralnet.trainer(network, X_train, y_train, X_valid, y_valid, network.config)
 		
 		network.layers = best_model
 		accuracy = neuralnet.test(network, X_test, y_test, network.config)
@@ -41,7 +41,7 @@ def main():
 		plt.plot(range(len(validation_errors)), validation_errors,"ro", color = "red")
 		plt.xlabel("Epochs")
 		plt.ylabel("Percentage Correct")
-		plt.title("Training with regularization factor: " + regFactor)
+		plt.title("Training with regularization factor: " + str(regFactor))
 		name = "partD_" + str(regFactor) + ".png"
 		plt.savefig(name)
 		
