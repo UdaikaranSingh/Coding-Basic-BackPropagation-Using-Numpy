@@ -296,7 +296,7 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
     else:
       count = 0
     if (count == config['early_stop_epoch']):
-      best_model = copy.deepcopy(model.layer)
+      best_model = copy.deepcopy(model.layers)
       best_epoch = i + 1
       best_found = True
 

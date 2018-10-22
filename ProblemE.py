@@ -16,7 +16,7 @@ def main():
 	activation_functions = ["sigmoid", "ReLU"]
 
 	#found this as the optimal number of epochs from Part C
-	neuralnet.config['epochs'] = 33
+	neuralnet.config['epochs'] = 36
 	
 
 	for function in activation_functions:

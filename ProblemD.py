@@ -13,9 +13,9 @@ def main():
 
 
 	#found this as the optimal number of epochs from Part C
-	neuralnet.config['epochs'] = 36
+	neuralnet.config['epochs'] = 40
 
-	regularization_constant_testers = [0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5]
+	regularization_constant_testers = [0.0001, 0.001, 0.01]
 
 
 	for regFactor in regularization_constant_testers:

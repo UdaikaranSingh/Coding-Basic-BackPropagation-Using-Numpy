@@ -13,7 +13,7 @@ def main():
 	X_test, y_test = neuralnet.load_data(test_data_fname)
 
 	#found this as the optimal number of epochs from Part C
-	neuralnet.config['epochs'] = 33
+	neuralnet.config['epochs'] = 36
 
 	nnet = neuralnet.Neuralnetwork(neuralnet.config)
 
