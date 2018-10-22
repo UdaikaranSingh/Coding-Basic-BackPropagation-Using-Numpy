@@ -16,7 +16,7 @@ def main():
 
 
 	#found this as the optimal number of epochs from Part C
-	neuralnet.config['epochs'] = 37
+	neuralnet.config['epochs'] = 26
 
 	testshapes = [[784, 25, 10], [784, 100, 10], [784, 47, 47, 10]]
 

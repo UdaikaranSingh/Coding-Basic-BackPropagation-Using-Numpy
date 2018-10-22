@@ -21,8 +21,6 @@ def main():
 	training_errors, validation_errors, best_model, numEpochs = neuralnet.trainer(nnet, X_train, y_train, X_valid, y_valid, nnet.config)
 
 	print("Optimal Number of Epochs: ", numEpochs)
-	print(training_errors)
-	print(validation_errors)
 
 	#setting thte model to the best weights and biases
 	nnet.layers = best_model
