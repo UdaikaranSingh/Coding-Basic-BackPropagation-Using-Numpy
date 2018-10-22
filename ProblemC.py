@@ -14,7 +14,7 @@ def main():
 	X_valid, y_valid = neuralnet.load_data(valid_data_fname)
 	X_test, y_test = neuralnet.load_data(test_data_fname)
 
-	neuralnet.config['epochs'] = 50
+	neuralnet.config['epochs'] = 100
 
 	nnet = neuralnet.Neuralnetwork(neuralnet.config)
 
