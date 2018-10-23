@@ -24,7 +24,7 @@ Source Files:
 What Each File Does:
 1.gradientchecker.py
 	This corresponds with part B of the write-up.
-	This compares gradient approximation with theoretical gradient.
+	This compares gradient approximation with gradient we computed.
 2.ProblemC.py
 	This corresponds with part C of the write-up.
 	In this, the model trains on the complete dataset for 100 epochs.
