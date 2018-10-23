@@ -274,7 +274,7 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
   best_epoch = 0
   
   for i in range(numEpochs):
-    print(i + 1)
+    print("Current Epoch: ", i + 1)
     for sample in range(batch_size):
       
       #forwards pass & backpass
@@ -317,10 +317,6 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
     training_accuracy.append(training_acc)
     validation_accuracy.append(valid_acc)
 
-    print ("training accuracy: ", training_acc)
-    print("validation accuracy: ", valid_acc)
-    #print ("validation", test(model, X_valid, y_valid, model.config))
-    #print ("testing", test(model, X_test, y_test, model.config))
 
   if (best_found):
     return training_accuracy, validation_accuracy, best_model, best_epoch
