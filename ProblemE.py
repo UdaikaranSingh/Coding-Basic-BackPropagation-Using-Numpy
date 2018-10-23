@@ -16,7 +16,7 @@ def main():
 
 
 
-	activation_functions = ["sigmoid", "ReLU"]
+	activation_functions = ["tanh", "sigmoid", "ReLU"]
 
 	#found this as the optimal number of epochs from Part C
 	neuralnet.config['epochs'] = 26
