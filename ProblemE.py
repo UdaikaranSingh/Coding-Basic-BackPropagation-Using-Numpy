@@ -34,8 +34,9 @@ def main():
 		print("Activation Function Used: ", function)
 		print("Accuracy: ", accuracy)
 
-		plt.plot(range(len(training_errors)), training_errors,"ro", color = "blue")
-		plt.plot(range(len(validation_errors)), validation_errors,"ro", color = "red")
+		plt.plot(range(len(training_errors)), training_errors,"ro", color = "blue", label='Training Error')
+		plt.plot(range(len(validation_errors)), validation_errors,"ro", color = "red", label='Validation Error')
+		plt.legend(loc='upper left')
 		plt.xlabel("Epochs")
 		plt.ylabel("Percentage Correct")
 		plt.title("Training with " + function + " Function")
