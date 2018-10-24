@@ -5,20 +5,19 @@ Names:
 Class: CSE 190
 ======================================
 Which File to run:
-1.mainFile.py
+1.Run mainFile.py with python3
 
 This files runs all the other files.
 ======================================
 Source Files:
-1.data.zip
-2.gradientchecker.py
-3.mainFile.py
-4.checker.py
-5.neuralnet.py 
-6.ProblemC.py
-7.ProblemD.py
-8.ProblemE.py
-9.ProblemF.py
+1.gradientchecker.py
+2.mainFile.py
+3.checker.py
+4.neuralnet.py 
+5.ProblemC.py
+6.ProblemD.py
+7.ProblemE.py
+8.ProblemF.py
 
 ======================================
 What Each File Does:
@@ -55,4 +54,3 @@ What Each File Does:
 Helper Files:
 1.checker.py
 2.neuralnet.py
-3.data.zip
