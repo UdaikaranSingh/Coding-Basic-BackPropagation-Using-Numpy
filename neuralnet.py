@@ -141,8 +141,9 @@ class Layer():
     self.d_x = None  # Save the gradient w.r.t x in this
     self.d_w = None  # Save the gradient w.r.t w in this
     self.d_b = None  # Save the gradient w.r.t b in this
+    self.momentum_d_w = None
+    self.momentum_d_b = None
 
-    self.momentum_unit = [np.ones(shape = self.w.shape), np.ones(shape = self.b.shape)]
     self.count = 0
 
   def forward_pass(self, x):
@@ -159,31 +160,18 @@ class Layer():
     Write the code for backward pass. This takes in gradient from its next layer as input,
     computes gradient for its weights and the delta to pass to its previous layers.
     """
-    old_d_w = self.d_w
-    old_d_b = self.d_b
+    if (self.count > 0):
+      self.momentum_d_w = (self.d_w) * config['momentum_gamma']**self.count
+      self.momentum_d_b = (self.d_b) * config['momentum_gamma']**self.count
 
     #add regularization term
     self.d_x = np.dot(delta, self.w.T)
     self.d_b = delta + config['L2_penalty'] * self.b
     self.d_w = np.dot(delta.T, self.x).T + config['L2_penalty'] * self.w
 
-    #Way to update momentum term
-    if (config['momentum'] == True):
-      if (self.count > 0):
-        momentumUpdate(self.momentum_unit[0], old_d_w, self.d_w)
-        momentumUpdate(self.momentum_unit[1], old_d_b, self.d_b)
-      self.count = self.count + 1
+    self.count = self.count + 1
 
     return self.d_x
-
-def momentumUpdate(oldmomentum, old_grad, new_grad):
-  truth = ((old_grad * new_grad) > 0)
-  for i in range(old_grad.shape[0]):
-    for y in range(old_grad.shape[1]):
-      if (truth[i][y] == False):
-        oldmomentum[i][y] = oldmomentum[i][y] + 0.05
-      else:
-        oldmomentum[i][y] = oldmomentum[i][y] * 0.95
 
 
 class Neuralnetwork():
@@ -216,7 +204,7 @@ class Neuralnetwork():
       self.y = softmax(curOut)
       
       #computed loss in different part of code
-      #loss = self.loss_func(self.y, self.targets)
+      loss = self.loss_func(self.y, self.targets)
       loss = 0
 
     return loss, self.y
@@ -276,7 +264,6 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
   for i in range(numEpochs):
     print("Current Epoch: ", i + 1)
     for sample in range(batch_size):
-      
       #forwards pass & backpass
       model.forward_pass(X_batch[sample].reshape(1,784), y_batch[sample])[0]
       model.backward_pass()
@@ -290,9 +277,12 @@ def trainer(model, X_train, y_train, X_valid, y_valid, config):
             layer.w = layer.w + learning_rate * layer.d_w
             layer.b = layer.b + learning_rate * layer.d_b
           else:
-            momentum = config['momentum_gamma']
-            layer.w = layer.w + learning_rate * layer.d_w + momentum * layer.momentum_unit[0]
-            layer.b = layer.b + learning_rate * layer.d_b + momentum * layer.momentum_unit[1]
+            if (layer.count > 1):
+              layer.w = layer.w + learning_rate * layer.d_w + layer.momentum_d_w
+              layer.b = layer.b + learning_rate * layer.d_b + layer.momentum_d_b
+            else:
+              layer.w = layer.w + learning_rate * layer.d_w
+              layer.b = layer.b + learning_rate * layer.d_b
 
     old_validation_error = validation_error
     validation_error = cross_entropy(model, X_valid, y_valid, model.config['L2_penalty'])
